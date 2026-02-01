@@ -48,25 +48,21 @@
       0%, 100% { filter: drop-shadow(0 0 8px rgba(201,162,39,0.2)); }
       50% { filter: drop-shadow(0 0 20px rgba(201,162,39,0.5)); }
     }
-    @keyframes lineGrow {
-      0%, 100% { stroke-dashoffset: 1000; }
-      50% { stroke-dashoffset: 0; }
-    }
     @keyframes scanline {
       0% { transform: translateY(-300px); }
       100% { transform: translateY(300px); }
-    }
-    @keyframes fadeSlide {
-      0%, 100% { opacity: 0.02; }
-      50% { opacity: 0.06; }
     }
     @keyframes hexRotate {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    @keyframes barPulse {
-      0%, 100% { width: 0; opacity: 0.8; }
-      50% { width: 400px; opacity: 1; }
+    @keyframes gearSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes gearSpinReverse {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(-360deg); }
     }
     .grad-stop1 { animation: gradientShift 10s ease-in-out infinite; }
     .grad-stop2 { animation: gradientShift2 10s ease-in-out infinite; }
@@ -82,7 +78,8 @@
     .text-glow { animation: textGlow 4s ease-in-out infinite; }
     .hex-rotate { animation: hexRotate 30s linear infinite; transform-origin: center; }
     .scanline { animation: scanline 8s linear infinite; }
-    .fade-slide { animation: fadeSlide 6s ease-in-out infinite; }
+    .gear-spin { animation: gearSpin 20s linear infinite; transform-origin: center; }
+    .gear-spin-rev { animation: gearSpinReverse 25s linear infinite; transform-origin: center; }
   </style>
 
   <defs>
@@ -110,14 +107,62 @@
       <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(201,162,39,0.03)" stroke-width="1"/>
     </pattern>
 
-    <!-- Hexagon pattern -->
-    <pattern id="hexPattern" width="50" height="43.3" patternUnits="userSpaceOnUse">
-      <polygon points="25,0 50,14.4 50,43.3 25,57.7 0,43.3 0,14.4" fill="none" stroke="rgba(201,162,39,0.02)" stroke-width="0.5"/>
-    </pattern>
+    <!-- Gear shape -->
+    <g id="gear">
+      <circle r="12" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      <circle r="5" fill="none" stroke="currentColor" stroke-width="1"/>
+      <g stroke="currentColor" stroke-width="2">
+        <line x1="0" y1="-12" x2="0" y2="-16"/>
+        <line x1="0" y1="12" x2="0" y2="16"/>
+        <line x1="-12" y1="0" x2="-16" y2="0"/>
+        <line x1="12" y1="0" x2="16" y2="0"/>
+        <line x1="-8.5" y1="-8.5" x2="-11.3" y2="-11.3"/>
+        <line x1="8.5" y1="-8.5" x2="11.3" y2="-11.3"/>
+        <line x1="-8.5" y1="8.5" x2="-11.3" y2="11.3"/>
+        <line x1="8.5" y1="8.5" x2="11.3" y2="11.3"/>
+      </g>
+    </g>
 
-    <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="2"/>
-    </filter>
+    <!-- Small gear -->
+    <g id="gear-sm">
+      <circle r="8" fill="none" stroke="currentColor" stroke-width="1"/>
+      <circle r="3" fill="none" stroke="currentColor" stroke-width="0.8"/>
+      <g stroke="currentColor" stroke-width="1.5">
+        <line x1="0" y1="-8" x2="0" y2="-11"/>
+        <line x1="0" y1="8" x2="0" y2="11"/>
+        <line x1="-8" y1="0" x2="-11" y2="0"/>
+        <line x1="8" y1="0" x2="11" y2="0"/>
+        <line x1="-5.7" y1="-5.7" x2="-7.8" y2="-7.8"/>
+        <line x1="5.7" y1="5.7" x2="7.8" y2="7.8"/>
+      </g>
+    </g>
+
+    <!-- Wrench/Spanner -->
+    <g id="wrench">
+      <path d="M-18,0 L-8,0 L-6,-3 L6,-3 L8,0 L18,0 L18,4 L8,4 L6,7 L-6,7 L-8,4 L-18,4 Z"
+            fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+      <circle cx="-13" cy="2" r="3" fill="none" stroke="currentColor" stroke-width="1"/>
+      <circle cx="13" cy="2" r="3" fill="none" stroke="currentColor" stroke-width="1"/>
+    </g>
+
+    <!-- Screwdriver -->
+    <g id="screwdriver">
+      <rect x="-2" y="-20" width="4" height="25" rx="1" fill="none" stroke="currentColor" stroke-width="1"/>
+      <path d="M-3,5 L-4,18 L4,18 L3,5 Z" fill="none" stroke="currentColor" stroke-width="1"/>
+      <line x1="0" y1="18" x2="0" y2="24" stroke="currentColor" stroke-width="2"/>
+    </g>
+
+    <!-- Hammer -->
+    <g id="hammer">
+      <rect x="-3" y="-8" width="6" height="28" rx="1" fill="none" stroke="currentColor" stroke-width="1"/>
+      <rect x="-12" y="-18" width="24" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.2"/>
+    </g>
+
+    <!-- Hexagon bolt -->
+    <g id="bolt">
+      <polygon points="0,-8 6.9,-4 6.9,4 0,8 -6.9,4 -6.9,-4" fill="none" stroke="currentColor" stroke-width="1.2"/>
+      <circle r="3" fill="none" stroke="currentColor" stroke-width="0.8"/>
+    </g>
   </defs>
 
   <!-- Background -->
@@ -126,26 +171,75 @@
   <!-- Subtle grid overlay -->
   <rect width="1200" height="300" fill="url(#grid)"/>
 
+  <!-- ========== TOOL SILHOUETTES (subtle background) ========== -->
+
+  <!-- Left side tools -->
+  <g opacity="0.04" fill="none" stroke="rgba(201,162,39,1)">
+    <!-- Large gear, left -->
+    <g transform="translate(80, 200)" class="gear-spin">
+      <use href="#gear" transform="scale(1.8)"/>
+    </g>
+    <!-- Small gear meshed -->
+    <g transform="translate(120, 170)" class="gear-spin-rev">
+      <use href="#gear-sm" transform="scale(1.2)"/>
+    </g>
+  </g>
+
+  <!-- Wrench, top left floating -->
+  <g transform="translate(60, 60) rotate(-30)" opacity="0.035" stroke="rgba(201,162,39,1)" class="float1">
+    <use href="#wrench" transform="scale(1.1)"/>
+  </g>
+
+  <!-- Right side tools -->
+  <g opacity="0.04" fill="none" stroke="rgba(201,162,39,1)">
+    <!-- Gear cluster, right -->
+    <g transform="translate(1100, 80)" class="gear-spin-rev">
+      <use href="#gear" transform="scale(1.5)"/>
+    </g>
+    <g transform="translate(1140, 115)" class="gear-spin">
+      <use href="#gear-sm"/>
+    </g>
+  </g>
+
+  <!-- Screwdriver, bottom right -->
+  <g transform="translate(1130, 240) rotate(25)" opacity="0.03" stroke="rgba(201,162,39,1)" class="float2">
+    <use href="#screwdriver" transform="scale(0.9)"/>
+  </g>
+
+  <!-- Bolts scattered subtly -->
+  <g opacity="0.03" stroke="rgba(201,162,39,1)">
+    <use href="#bolt" transform="translate(250, 250) scale(0.8)"/>
+    <use href="#bolt" transform="translate(950, 50) scale(0.7)"/>
+    <use href="#bolt" transform="translate(180, 40) scale(0.6)"/>
+    <use href="#bolt" transform="translate(1020, 260) scale(0.7)"/>
+  </g>
+
+  <!-- Hammer, left side -->
+  <g transform="translate(40, 140) rotate(-15)" opacity="0.025" stroke="rgba(201,162,39,1)">
+    <use href="#hammer" transform="scale(0.8)"/>
+  </g>
+
+  <!-- Extra wrench, right bottom -->
+  <g transform="translate(1050, 200) rotate(20)" opacity="0.03" stroke="rgba(201,162,39,1)">
+    <use href="#wrench" transform="scale(0.9)"/>
+  </g>
+
+  <!-- ========== END TOOL SILHOUETTES ========== -->
+
   <!-- Animated scanline effect -->
   <rect width="1200" height="2" fill="rgba(201,162,39,0.05)" class="scanline"/>
 
   <!-- Rotating hex grid (background) -->
-  <g transform="translate(150, 150)" class="hex-rotate" opacity="0.3">
+  <g transform="translate(150, 150)" class="hex-rotate" opacity="0.25">
     <circle r="100" fill="none" stroke="rgba(201,162,39,0.1)" stroke-width="0.5"/>
     <circle r="70" fill="none" stroke="rgba(201,162,39,0.08)" stroke-width="0.5"/>
     <circle r="40" fill="none" stroke="rgba(201,162,39,0.06)" stroke-width="0.5"/>
-    <line x1="-100" y1="0" x2="100" y2="0" stroke="rgba(201,162,39,0.05)" stroke-width="0.5"/>
-    <line x1="0" y1="-100" x2="0" y2="100" stroke="rgba(201,162,39,0.05)" stroke-width="0.5"/>
-    <line x1="-70" y1="-70" x2="70" y2="70" stroke="rgba(201,162,39,0.04)" stroke-width="0.5"/>
-    <line x1="-70" y1="70" x2="70" y2="-70" stroke="rgba(201,162,39,0.04)" stroke-width="0.5"/>
   </g>
 
-  <g transform="translate(1050, 150)" class="hex-rotate" style="animation-direction: reverse;" opacity="0.3">
+  <g transform="translate(1050, 150)" class="hex-rotate" style="animation-direction: reverse;" opacity="0.25">
     <circle r="80" fill="none" stroke="rgba(201,162,39,0.1)" stroke-width="0.5"/>
     <circle r="55" fill="none" stroke="rgba(201,162,39,0.08)" stroke-width="0.5"/>
     <circle r="30" fill="none" stroke="rgba(201,162,39,0.06)" stroke-width="0.5"/>
-    <line x1="-80" y1="0" x2="80" y2="0" stroke="rgba(201,162,39,0.05)" stroke-width="0.5"/>
-    <line x1="0" y1="-80" x2="0" y2="80" stroke="rgba(201,162,39,0.05)" stroke-width="0.5"/>
   </g>
 
   <!-- Orbiting elements (left) -->
@@ -167,12 +261,6 @@
   </g>
   <g class="float2" transform="translate(1120, 220)">
     <rect x="-8" y="-8" width="16" height="16" fill="none" stroke="rgba(201,162,39,0.3)" stroke-width="1" transform="rotate(45)"/>
-  </g>
-  <g class="float1" style="animation-delay: 2s;" transform="translate(200, 240)">
-    <circle r="6" fill="none" stroke="rgba(201,162,39,0.25)" stroke-width="1"/>
-  </g>
-  <g class="float2" style="animation-delay: 1s;" transform="translate(1000, 60)">
-    <polygon points="0,-8 6.9,4 -6.9,4" fill="none" stroke="rgba(201,162,39,0.3)" stroke-width="1"/>
   </g>
 
   <!-- Main title -->
@@ -227,10 +315,6 @@
   <g class="pulse">
     <circle cx="350" cy="120" r="1" fill="rgba(201,162,39,0.5)"/>
     <circle cx="850" cy="120" r="1" fill="rgba(201,162,39,0.5)"/>
-  </g>
-  <g class="pulse" style="animation-delay: 2s;">
-    <circle cx="300" cy="180" r="0.8" fill="rgba(201,162,39,0.4)"/>
-    <circle cx="900" cy="180" r="0.8" fill="rgba(201,162,39,0.4)"/>
   </g>
 
   <!-- Version badge -->
