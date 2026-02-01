@@ -1,82 +1,247 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300">
+  <style>
+    @keyframes gradientShift {
+      0%, 100% { stop-color: #667eea; }
+      33% { stop-color: #764ba2; }
+      66% { stop-color: #f093fb; }
+    }
+    @keyframes gradientShift2 {
+      0%, 100% { stop-color: #764ba2; }
+      33% { stop-color: #f093fb; }
+      66% { stop-color: #667eea; }
+    }
+    @keyframes gradientShift3 {
+      0%, 100% { stop-color: #f093fb; }
+      33% { stop-color: #667eea; }
+      66% { stop-color: #764ba2; }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(5deg); }
+    }
+    @keyframes float2 {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(-5deg); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.1); }
+    }
+    @keyframes orbit {
+      0% { transform: rotate(0deg) translateX(80px) rotate(0deg); }
+      100% { transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+    }
+    @keyframes orbit2 {
+      0% { transform: rotate(120deg) translateX(60px) rotate(-120deg); }
+      100% { transform: rotate(480deg) translateX(60px) rotate(-480deg); }
+    }
+    @keyframes orbit3 {
+      0% { transform: rotate(240deg) translateX(100px) rotate(-240deg); }
+      100% { transform: rotate(600deg) translateX(100px) rotate(-600deg); }
+    }
+    @keyframes spin3d {
+      0% { transform: perspective(400px) rotateY(0deg); }
+      100% { transform: perspective(400px) rotateY(360deg); }
+    }
+    @keyframes glow {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(255,255,255,0.3)); }
+      50% { filter: drop-shadow(0 0 20px rgba(255,255,255,0.8)); }
+    }
+    @keyframes textGlow {
+      0%, 100% { filter: drop-shadow(0 0 10px rgba(102,126,234,0.5)); }
+      50% { filter: drop-shadow(0 0 30px rgba(240,147,251,0.8)); }
+    }
+    @keyframes slideIn {
+      0% { transform: translateX(-100px); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes ripple {
+      0% { r: 20; opacity: 0.8; }
+      100% { r: 150; opacity: 0; }
+    }
+    @keyframes dash {
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes cubeRotate {
+      0% { transform: rotateX(-20deg) rotateY(0deg); }
+      100% { transform: rotateX(-20deg) rotateY(360deg); }
+    }
+    .grad-stop1 { animation: gradientShift 8s ease-in-out infinite; }
+    .grad-stop2 { animation: gradientShift2 8s ease-in-out infinite; }
+    .grad-stop3 { animation: gradientShift3 8s ease-in-out infinite; }
+    .float1 { animation: float 4s ease-in-out infinite; }
+    .float2 { animation: float2 5s ease-in-out infinite 0.5s; }
+    .pulse { animation: pulse 3s ease-in-out infinite; }
+    .orbit1 { animation: orbit 12s linear infinite; }
+    .orbit2 { animation: orbit2 10s linear infinite; }
+    .orbit3 { animation: orbit3 15s linear infinite; }
+    .glow { animation: glow 2s ease-in-out infinite; }
+    .text-glow { animation: textGlow 3s ease-in-out infinite; }
+    .ripple { animation: ripple 3s ease-out infinite; }
+    .cube { animation: cubeRotate 8s linear infinite; transform-origin: center; }
+  </style>
+
   <defs>
     <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#667eea"/>
-      <stop offset="50%" style="stop-color:#764ba2"/>
-      <stop offset="100%" style="stop-color:#f093fb"/>
+      <stop offset="0%" class="grad-stop1" style="stop-color:#667eea"/>
+      <stop offset="50%" class="grad-stop2" style="stop-color:#764ba2"/>
+      <stop offset="100%" class="grad-stop3" style="stop-color:#f093fb"/>
     </linearGradient>
     <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" style="stop-color:#ffffff"/>
       <stop offset="100%" style="stop-color:#e0e7ff"/>
     </linearGradient>
-    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd700"/>
+      <stop offset="100%" style="stop-color:#ff6b6b"/>
+    </linearGradient>
+    <filter id="glow3d" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
       <feMerge>
         <feMergeNode in="coloredBlur"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
-    <filter id="shadow">
-      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.3"/>
+    <filter id="shadow3d">
+      <feDropShadow dx="4" dy="8" stdDeviation="6" flood-color="#1a1a2e" flood-opacity="0.4"/>
     </filter>
   </defs>
 
-  <!-- Background -->
+  <!-- Animated Background -->
   <rect width="1200" height="300" fill="url(#bgGradient)"/>
 
-  <!-- Grid pattern overlay -->
-  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+  <!-- Animated grid -->
+  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
   </pattern>
   <rect width="1200" height="300" fill="url(#grid)"/>
 
-  <!-- Decorative circles -->
-  <circle cx="100" cy="150" r="120" fill="rgba(255,255,255,0.03)"/>
-  <circle cx="1100" cy="150" r="100" fill="rgba(255,255,255,0.03)"/>
-  <circle cx="600" cy="50" r="80" fill="rgba(255,255,255,0.02)"/>
+  <!-- Ripple effects -->
+  <circle cx="200" cy="150" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" class="ripple"/>
+  <circle cx="1000" cy="150" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" class="ripple" style="animation-delay: 1s;"/>
+  <circle cx="600" cy="150" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" class="ripple" style="animation-delay: 2s;"/>
 
-  <!-- Tool icons group -->
-  <g transform="translate(120, 120)" filter="url(#glow)">
-    <!-- Wrench icon -->
-    <path d="M25 5 L30 10 L25 15 L20 10 Z M10 20 L20 10 L25 15 L15 25 L10 25 Z"
-          fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round"/>
+  <!-- Floating decorative spheres with 3D effect -->
+  <g class="float1">
+    <circle cx="120" cy="80" r="25" fill="url(#iconGradient)" opacity="0.3" filter="url(#glow3d)"/>
+    <ellipse cx="115" cy="75" rx="8" ry="5" fill="rgba(255,255,255,0.4)"/>
+  </g>
+  <g class="float2">
+    <circle cx="1080" cy="220" r="20" fill="url(#iconGradient)" opacity="0.3" filter="url(#glow3d)"/>
+    <ellipse cx="1076" cy="216" rx="6" ry="4" fill="rgba(255,255,255,0.4)"/>
+  </g>
+  <g class="float1" style="animation-delay: 1s;">
+    <circle cx="180" cy="220" r="15" fill="rgba(255,255,255,0.2)" filter="url(#glow3d)"/>
+  </g>
+  <g class="float2" style="animation-delay: 0.5s;">
+    <circle cx="1020" cy="70" r="18" fill="rgba(255,255,255,0.2)" filter="url(#glow3d)"/>
   </g>
 
-  <g transform="translate(1020, 120)" filter="url(#glow)">
-    <!-- Gear icon -->
-    <circle cx="25" cy="25" r="10" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2"/>
-    <g fill="rgba(255,255,255,0.8)">
-      <rect x="23" y="5" width="4" height="8" rx="1"/>
-      <rect x="23" y="37" width="4" height="8" rx="1"/>
-      <rect x="5" y="23" width="8" height="4" rx="1"/>
-      <rect x="37" y="23" width="8" height="4" rx="1"/>
-    </g>
+  <!-- 3D Rotating Cube (left side) -->
+  <g transform="translate(100, 150)" class="cube" filter="url(#glow3d)">
+    <!-- Front face -->
+    <polygon points="-20,-20 20,-20 20,20 -20,20" fill="rgba(102,126,234,0.6)" stroke="rgba(255,255,255,0.8)" stroke-width="2"/>
+    <!-- Top face (3D effect) -->
+    <polygon points="-20,-20 20,-20 30,-30 -10,-30" fill="rgba(118,75,162,0.6)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+    <!-- Right face (3D effect) -->
+    <polygon points="20,-20 30,-30 30,10 20,20" fill="rgba(240,147,251,0.6)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
   </g>
 
-  <!-- Main title -->
-  <text x="600" y="130" font-family="'Segoe UI', system-ui, sans-serif" font-size="72" font-weight="700"
-        fill="url(#textGradient)" text-anchor="middle" filter="url(#shadow)">
-    ProToolz
-  </text>
+  <!-- Orbiting particles around right side -->
+  <g transform="translate(1100, 150)">
+    <circle r="6" fill="#ffd700" class="orbit1 glow"/>
+    <circle r="4" fill="#ff6b6b" class="orbit2 glow"/>
+    <circle r="5" fill="#4ecdc4" class="orbit3 glow"/>
+  </g>
+
+  <!-- Orbiting particles around left side -->
+  <g transform="translate(100, 150)">
+    <circle r="5" fill="#ffd700" class="orbit2 glow" style="animation-delay: 2s;"/>
+    <circle r="3" fill="#a855f7" class="orbit3 glow" style="animation-delay: 1s;"/>
+  </g>
+
+  <!-- Main title with 3D shadow effect -->
+  <g filter="url(#shadow3d)">
+    <text x="600" y="115" font-family="'Segoe UI', system-ui, sans-serif" font-size="80" font-weight="800"
+          fill="url(#textGradient)" text-anchor="middle" class="text-glow" letter-spacing="-2">
+      ProToolz
+    </text>
+  </g>
 
   <!-- Subtitle -->
-  <text x="600" y="175" font-family="'Segoe UI', system-ui, sans-serif" font-size="24" font-weight="400"
-        fill="rgba(255,255,255,0.9)" text-anchor="middle">
+  <text x="600" y="165" font-family="'Segoe UI', system-ui, sans-serif" font-size="22" font-weight="400"
+        fill="rgba(255,255,255,0.95)" text-anchor="middle" letter-spacing="1">
     Claude Code Skills Collection
   </text>
 
-  <!-- Tagline -->
-  <text x="600" y="210" font-family="'Segoe UI', system-ui, sans-serif" font-size="16" font-weight="300"
-        fill="rgba(255,255,255,0.7)" text-anchor="middle" letter-spacing="3">
-    11 SKILLS  |  1 AGENT  |  1 PLUGIN
-  </text>
+  <!-- Animated tagline with icons -->
+  <g transform="translate(600, 200)">
+    <!-- Skills icon -->
+    <g transform="translate(-140, -8)" class="pulse">
+      <circle r="10" fill="rgba(255,215,0,0.3)"/>
+      <text font-size="12" fill="#ffd700" text-anchor="middle" dy="4">⚡</text>
+    </g>
+    <text x="-95" y="5" font-family="monospace" font-size="14" fill="rgba(255,255,255,0.9)" font-weight="600">11 SKILLS</text>
 
-  <!-- Bottom accent line -->
-  <rect x="400" y="240" width="400" height="3" rx="1.5" fill="rgba(255,255,255,0.3)"/>
+    <!-- Separator -->
+    <text x="-20" y="5" font-family="monospace" font-size="14" fill="rgba(255,255,255,0.5)">│</text>
 
-  <!-- Version badge -->
-  <g transform="translate(1050, 20)">
-    <rect width="80" height="24" rx="12" fill="rgba(255,255,255,0.15)"/>
-    <text x="40" y="16" font-family="monospace" font-size="11" fill="white" text-anchor="middle">v1.0.0</text>
+    <!-- Agent icon -->
+    <g transform="translate(10, -8)" class="pulse" style="animation-delay: 0.5s;">
+      <circle r="10" fill="rgba(167,139,250,0.3)"/>
+      <text font-size="12" fill="#a78bfa" text-anchor="middle" dy="4">🤖</text>
+    </g>
+    <text x="55" y="5" font-family="monospace" font-size="14" fill="rgba(255,255,255,0.9)" font-weight="600">1 AGENT</text>
+
+    <!-- Separator -->
+    <text x="115" y="5" font-family="monospace" font-size="14" fill="rgba(255,255,255,0.5)">│</text>
+
+    <!-- Plugin icon -->
+    <g transform="translate(145, -8)" class="pulse" style="animation-delay: 1s;">
+      <circle r="10" fill="rgba(52,211,153,0.3)"/>
+      <text font-size="12" fill="#34d399" text-anchor="middle" dy="4">🔌</text>
+    </g>
+    <text x="195" y="5" font-family="monospace" font-size="14" fill="rgba(255,255,255,0.9)" font-weight="600">1 PLUGIN</text>
+  </g>
+
+  <!-- Animated bottom line -->
+  <rect x="350" y="240" width="500" height="4" rx="2" fill="rgba(255,255,255,0.2)"/>
+  <rect x="350" y="240" width="500" height="4" rx="2" fill="url(#iconGradient)" opacity="0.8" class="glow">
+    <animate attributeName="width" values="0;500;500;0" dur="4s" repeatCount="indefinite"/>
+    <animate attributeName="x" values="600;350;350;600" dur="4s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Floating tech icons (left) -->
+  <g transform="translate(50, 150)" class="float1">
+    <rect x="-15" y="-15" width="30" height="30" rx="6" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+    <text x="0" y="6" font-size="16" text-anchor="middle" fill="white">🛠️</text>
+  </g>
+
+  <!-- Floating tech icons (right) -->
+  <g transform="translate(1150, 150)" class="float2">
+    <rect x="-15" y="-15" width="30" height="30" rx="6" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+    <text x="0" y="6" font-size="16" text-anchor="middle" fill="white">⚙️</text>
+  </g>
+
+  <!-- Version badge with glow -->
+  <g transform="translate(1080, 25)" class="pulse">
+    <rect x="-40" y="-12" width="80" height="24" rx="12" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+    <text x="0" y="5" font-family="monospace" font-size="11" fill="white" text-anchor="middle" font-weight="600">v1.0.0</text>
+  </g>
+
+  <!-- Sparkle effects -->
+  <g class="pulse">
+    <circle cx="300" cy="60" r="2" fill="white"/>
+    <circle cx="900" cy="80" r="2" fill="white"/>
+    <circle cx="400" cy="250" r="1.5" fill="white"/>
+    <circle cx="800" cy="40" r="1.5" fill="white"/>
+    <circle cx="700" cy="260" r="2" fill="white"/>
+  </g>
+  <g class="pulse" style="animation-delay: 1.5s;">
+    <circle cx="250" cy="180" r="1.5" fill="white"/>
+    <circle cx="950" cy="200" r="2" fill="white"/>
+    <circle cx="500" cy="30" r="1.5" fill="white"/>
+    <circle cx="150" cy="260" r="1" fill="white"/>
+    <circle cx="1050" cy="100" r="1.5" fill="white"/>
   </g>
 </svg>
