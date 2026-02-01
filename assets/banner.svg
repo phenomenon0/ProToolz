@@ -10,15 +10,11 @@
     }
     @keyframes float {
       0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
+      50% { transform: translateY(-10px); }
     }
     @keyframes floatAlt {
       0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-6px); }
-    }
-    @keyframes shimmer {
-      0%, 100% { opacity: 0.15; }
-      50% { opacity: 0.25; }
+      50% { transform: translateY(-8px); }
     }
     @keyframes pulse {
       0%, 100% { opacity: 0.5; }
@@ -46,9 +42,8 @@
     }
     .grad-stop1 { animation: gradientShift 10s ease-in-out infinite; }
     .grad-stop2 { animation: gradientShift2 10s ease-in-out infinite; }
-    .float { animation: float 7s ease-in-out infinite; }
-    .float-alt { animation: floatAlt 8s ease-in-out infinite 1s; }
-    .shimmer { animation: shimmer 4s ease-in-out infinite; }
+    .float { animation: float 6s ease-in-out infinite; }
+    .float-alt { animation: floatAlt 7s ease-in-out infinite 0.5s; }
     .pulse { animation: pulse 4s ease-in-out infinite; }
     .orbit1 { animation: orbit 20s linear infinite; }
     .orbit2 { animation: orbit2 16s linear infinite; }
@@ -71,25 +66,12 @@
       <stop offset="50%" style="stop-color:#ffffff"/>
       <stop offset="100%" style="stop-color:#c0c0c0"/>
     </linearGradient>
-    <!-- Shiny metallic gradient for tools -->
-    <linearGradient id="metalGold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#ffd700"/>
-      <stop offset="25%" style="stop-color:#c9a227"/>
-      <stop offset="50%" style="stop-color:#ffe066"/>
-      <stop offset="75%" style="stop-color:#b8860b"/>
+    <!-- Bold metallic gold -->
+    <linearGradient id="goldMetal" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd966"/>
+      <stop offset="50%" style="stop-color:#c9a227"/>
       <stop offset="100%" style="stop-color:#8b6914"/>
     </linearGradient>
-    <linearGradient id="metalSilver" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#e8e8e8"/>
-      <stop offset="25%" style="stop-color:#a0a0a0"/>
-      <stop offset="50%" style="stop-color:#ffffff"/>
-      <stop offset="75%" style="stop-color:#909090"/>
-      <stop offset="100%" style="stop-color:#606060"/>
-    </linearGradient>
-    <filter id="toolGlow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="3" result="blur"/>
-      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-    </filter>
     <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
       <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(201,162,39,0.03)" stroke-width="1"/>
     </pattern>
@@ -99,28 +81,41 @@
   <rect width="1200" height="300" fill="url(#bgGradient)"/>
   <rect width="1200" height="300" fill="url(#grid)"/>
 
-  <!-- ====== WRENCH ICON - LEFT ====== -->
-  <g transform="translate(110, 150) scale(2.8) rotate(-30)" class="float shimmer" filter="url(#toolGlow)">
-    <!-- Heroicons wrench-screwdriver style -->
-    <path fill="url(#metalGold)" d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"/>
-    <path fill="url(#metalSilver)" d="M4.867 19.125h.008v.008h-.008v-.008Z"/>
+  <!-- ====== WRENCH - LEFT - BOLD ====== -->
+  <g transform="translate(120, 150) rotate(-25)" class="float" opacity="0.35">
+    <g fill="url(#goldMetal)">
+      <!-- Wrench body -->
+      <path d="M-60 -8 L-35 -8 L-30 -15 L30 -15 L35 -8 L60 -8 L60 8 L35 8 L30 15 L-30 15 L-35 8 L-60 8 Z"/>
+      <!-- Left jaw hole -->
+      <circle cx="-47" cy="0" r="10" fill="#0f0f23"/>
+      <!-- Right jaw hole -->
+      <circle cx="47" cy="0" r="10" fill="#0f0f23"/>
+    </g>
+    <!-- Highlight -->
+    <path d="M-55 -6 L-35 -6 L-30 -13 L30 -13 L35 -6 L55 -6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
   </g>
 
-  <!-- ====== COG/GEAR ICON - RIGHT ====== -->
-  <g transform="translate(1090, 150) scale(3.2)" class="float-alt shimmer" filter="url(#toolGlow)">
-    <!-- Heroicons cog-6-tooth style -->
-    <path fill="url(#metalGold)" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 0 0-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 0 0-2.282.819l-.922 1.597a1.875 1.875 0 0 0 .432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 0 0 0 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 0 0-.432 2.385l.922 1.597a1.875 1.875 0 0 0 2.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 0 0 2.28-.819l.923-1.597a1.875 1.875 0 0 0-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 0 0 0-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 0 0-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 0 0-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 0 0-1.85-1.567h-1.843ZM12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z"/>
+  <!-- ====== GEAR - RIGHT - BOLD ====== -->
+  <g transform="translate(1080, 150)" class="float-alt" opacity="0.35">
+    <g fill="url(#goldMetal)">
+      <!-- Outer gear with teeth -->
+      <path d="M0 -70 L8 -70 L10 -55 L17 -53 L25 -65 L32 -61 L28 -48 L34 -43 L45 -52 L50 -45 L40 -35 L44 -28 L58 -32 L60 -24 L48 -17 L50 -9 L65 -8 L65 0 L65 8 L50 9 L48 17 L60 24 L58 32 L44 28 L40 35 L50 45 L45 52 L34 43 L28 48 L32 61 L25 65 L17 53 L10 55 L8 70 L0 70 L-8 70 L-10 55 L-17 53 L-25 65 L-32 61 L-28 48 L-34 43 L-45 52 L-50 45 L-40 35 L-44 28 L-58 32 L-60 24 L-48 17 L-50 9 L-65 8 L-65 0 L-65 -8 L-50 -9 L-48 -17 L-60 -24 L-58 -32 L-44 -28 L-40 -35 L-50 -45 L-45 -52 L-34 -43 L-28 -48 L-32 -61 L-25 -65 L-17 -53 L-10 -55 L-8 -70 Z"/>
+      <!-- Center hole -->
+      <circle cx="0" cy="0" r="22" fill="#0f0f23"/>
+    </g>
+    <!-- Highlight arc -->
+    <path d="M-40 -40 A56 56 0 0 1 40 -40" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="3"/>
   </g>
 
   <!-- Scanline -->
   <rect width="1200" height="2" fill="rgba(201,162,39,0.05)" class="scanline"/>
 
   <!-- Orbiting dots -->
-  <g transform="translate(150, 150)">
+  <g transform="translate(180, 150)">
     <circle r="3" fill="#c9a227" class="orbit1 glow"/>
     <circle r="2" fill="#d4af37" class="orbit2 glow"/>
   </g>
-  <g transform="translate(1050, 150)">
+  <g transform="translate(1020, 150)">
     <circle r="2.5" fill="#c9a227" class="orbit2 glow" style="animation-delay: 5s;"/>
   </g>
 
