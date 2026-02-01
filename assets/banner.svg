@@ -8,13 +8,13 @@
       0%, 100% { stop-color: #16213e; }
       50% { stop-color: #1f2937; }
     }
-    @keyframes accentPulse {
-      0%, 100% { stop-color: #c9a227; }
-      50% { stop-color: #d4af37; }
-    }
     @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(1deg); }
+    }
+    @keyframes floatRight {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-5px) rotate(-1deg); }
     }
     @keyframes pulse {
       0%, 100% { opacity: 0.5; }
@@ -40,25 +40,16 @@
       0% { transform: translateY(-300px); }
       100% { transform: translateY(300px); }
     }
-    @keyframes gearSpin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    @keyframes gearSpinRev {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(-360deg); }
-    }
     .grad-stop1 { animation: gradientShift 10s ease-in-out infinite; }
     .grad-stop2 { animation: gradientShift2 10s ease-in-out infinite; }
-    .float1 { animation: float 6s ease-in-out infinite; }
+    .float-left { animation: float 8s ease-in-out infinite; }
+    .float-right { animation: floatRight 9s ease-in-out infinite 0.5s; }
     .pulse { animation: pulse 4s ease-in-out infinite; }
     .orbit1 { animation: orbit 20s linear infinite; }
     .orbit2 { animation: orbit2 16s linear infinite; }
     .glow { animation: glow 3s ease-in-out infinite; }
     .text-glow { animation: textGlow 4s ease-in-out infinite; }
     .scanline { animation: scanline 8s linear infinite; }
-    .gear-spin { animation: gearSpin 20s linear infinite; transform-origin: center; }
-    .gear-spin-rev { animation: gearSpinRev 15s linear infinite; transform-origin: center; }
   </style>
 
   <defs>
@@ -84,104 +75,117 @@
   <rect width="1200" height="300" fill="url(#bgGradient)"/>
   <rect width="1200" height="300" fill="url(#grid)"/>
 
-  <!-- ====== TOOL SILHOUETTES (INLINED) ====== -->
+  <!-- ====== DETAILED WRENCH - LEFT SIDE ====== -->
+  <g transform="translate(95, 150) rotate(-25)" class="float-left" opacity="0.22" fill="none" stroke="#c9a227">
+    <!-- Main wrench body -->
+    <path d="M-70,0 L-45,0 L-42,-6 L42,-6 L45,0 L70,0 L70,10 L45,10 L42,16 L-42,16 L-45,10 L-70,10 Z"
+          stroke-width="1.5" stroke-linejoin="round"/>
 
-  <!-- GEAR - Bottom Left (large, spinning) -->
-  <g transform="translate(70, 230)" class="gear-spin" opacity="0.18" fill="none" stroke="#c9a227" stroke-width="2">
-    <circle r="28"/>
-    <circle r="12"/>
-    <line x1="0" y1="-28" x2="0" y2="-38"/>
-    <line x1="0" y1="28" x2="0" y2="38"/>
-    <line x1="-28" y1="0" x2="-38" y2="0"/>
-    <line x1="28" y1="0" x2="38" y2="0"/>
-    <line x1="-20" y1="-20" x2="-27" y2="-27"/>
-    <line x1="20" y1="-20" x2="27" y2="-27"/>
-    <line x1="-20" y1="20" x2="-27" y2="27"/>
-    <line x1="20" y1="20" x2="27" y2="27"/>
+    <!-- Left jaw opening -->
+    <circle cx="-55" cy="5" r="12" stroke-width="1.2"/>
+    <circle cx="-55" cy="5" r="6" stroke-width="0.8"/>
+    <!-- Left jaw detail lines -->
+    <line x1="-67" y1="5" x2="-62" y2="5" stroke-width="0.6"/>
+    <line x1="-48" y1="5" x2="-43" y2="5" stroke-width="0.6"/>
+    <line x1="-55" y1="-7" x2="-55" y2="-2" stroke-width="0.6"/>
+    <line x1="-55" y1="12" x2="-55" y2="17" stroke-width="0.6"/>
+
+    <!-- Right jaw opening -->
+    <circle cx="55" cy="5" r="12" stroke-width="1.2"/>
+    <circle cx="55" cy="5" r="6" stroke-width="0.8"/>
+    <!-- Right jaw detail lines -->
+    <line x1="43" y1="5" x2="48" y2="5" stroke-width="0.6"/>
+    <line x1="62" y1="5" x2="67" y2="5" stroke-width="0.6"/>
+    <line x1="55" y1="-7" x2="55" y2="-2" stroke-width="0.6"/>
+    <line x1="55" y1="12" x2="55" y2="17" stroke-width="0.6"/>
+
+    <!-- Handle grip lines -->
+    <line x1="-30" y1="-4" x2="-30" y2="14" stroke-width="0.5"/>
+    <line x1="-20" y1="-5" x2="-20" y2="15" stroke-width="0.5"/>
+    <line x1="-10" y1="-5" x2="-10" y2="15" stroke-width="0.5"/>
+    <line x1="0" y1="-5" x2="0" y2="15" stroke-width="0.5"/>
+    <line x1="10" y1="-5" x2="10" y2="15" stroke-width="0.5"/>
+    <line x1="20" y1="-5" x2="20" y2="15" stroke-width="0.5"/>
+    <line x1="30" y1="-4" x2="30" y2="14" stroke-width="0.5"/>
+
+    <!-- Center marking -->
+    <rect x="-8" y="0" width="16" height="10" rx="1" stroke-width="0.6"/>
+    <text x="0" y="7" font-family="monospace" font-size="6" fill="#c9a227" text-anchor="middle" opacity="0.7">12</text>
+
+    <!-- Edge bevels -->
+    <path d="M-70,-2 L-70,12" stroke-width="0.4"/>
+    <path d="M70,-2 L70,12" stroke-width="0.4"/>
   </g>
 
-  <!-- GEAR - Small meshed with big one (spinning opposite) -->
-  <g transform="translate(130, 185)" class="gear-spin-rev" opacity="0.15" fill="none" stroke="#c9a227" stroke-width="1.5">
-    <circle r="18"/>
-    <circle r="7"/>
-    <line x1="0" y1="-18" x2="0" y2="-25"/>
-    <line x1="0" y1="18" x2="0" y2="25"/>
-    <line x1="-18" y1="0" x2="-25" y2="0"/>
-    <line x1="18" y1="0" x2="25" y2="0"/>
-    <line x1="-13" y1="-13" x2="-18" y2="-18"/>
-    <line x1="13" y1="13" x2="18" y2="18"/>
-  </g>
+  <!-- ====== DETAILED GEAR/COG - RIGHT SIDE ====== -->
+  <g transform="translate(1105, 150)" class="float-right" opacity="0.20" fill="none" stroke="#c9a227">
+    <!-- Outer gear ring -->
+    <circle r="65" stroke-width="1.5"/>
+    <circle r="58" stroke-width="0.8"/>
 
-  <!-- GEAR - Top Right (spinning) -->
-  <g transform="translate(1120, 60)" class="gear-spin-rev" opacity="0.16" fill="none" stroke="#c9a227" stroke-width="2">
-    <circle r="24"/>
-    <circle r="10"/>
-    <line x1="0" y1="-24" x2="0" y2="-33"/>
-    <line x1="0" y1="24" x2="0" y2="33"/>
-    <line x1="-24" y1="0" x2="-33" y2="0"/>
-    <line x1="24" y1="0" x2="33" y2="0"/>
-    <line x1="-17" y1="-17" x2="-23" y2="-23"/>
-    <line x1="17" y1="17" x2="23" y2="23"/>
-  </g>
+    <!-- Inner hub -->
+    <circle r="22" stroke-width="1.2"/>
+    <circle r="15" stroke-width="0.8"/>
+    <circle r="8" stroke-width="1"/>
 
-  <!-- GEAR - Small, meshed top right -->
-  <g transform="translate(1155, 100)" class="gear-spin" opacity="0.12" fill="none" stroke="#c9a227" stroke-width="1.5">
-    <circle r="14"/>
-    <circle r="5"/>
-    <line x1="0" y1="-14" x2="0" y2="-20"/>
-    <line x1="0" y1="14" x2="0" y2="20"/>
-    <line x1="-14" y1="0" x2="-20" y2="0"/>
-    <line x1="14" y1="0" x2="20" y2="0"/>
-  </g>
+    <!-- Center cross -->
+    <line x1="-5" y1="0" x2="5" y2="0" stroke-width="1"/>
+    <line x1="0" y1="-5" x2="0" y2="5" stroke-width="1"/>
 
-  <!-- WRENCH - Top Left -->
-  <g transform="translate(55, 50) rotate(-35)" opacity="0.14" fill="none" stroke="#c9a227" stroke-width="1.8" class="float1">
-    <path d="M-22,0 L-10,0 L-8,-4 L8,-4 L10,0 L22,0 L22,5 L10,5 L8,9 L-8,9 L-10,5 L-22,5 Z" stroke-linejoin="round"/>
-    <circle cx="-16" cy="2.5" r="4"/>
-    <circle cx="16" cy="2.5" r="4"/>
-  </g>
-
-  <!-- WRENCH - Bottom Right -->
-  <g transform="translate(1040, 220) rotate(25)" opacity="0.12" fill="none" stroke="#c9a227" stroke-width="1.5">
-    <path d="M-20,0 L-9,0 L-7,-3.5 L7,-3.5 L9,0 L20,0 L20,4.5 L9,4.5 L7,8 L-7,8 L-9,4.5 L-20,4.5 Z" stroke-linejoin="round"/>
-    <circle cx="-14" cy="2.25" r="3.5"/>
-    <circle cx="14" cy="2.25" r="3.5"/>
-  </g>
-
-  <!-- HAMMER - Left side -->
-  <g transform="translate(30, 130) rotate(-20)" opacity="0.12" fill="none" stroke="#c9a227" stroke-width="1.5">
-    <rect x="-4" y="-5" width="8" height="35" rx="2"/>
-    <rect x="-14" y="-18" width="28" height="15" rx="3"/>
-  </g>
-
-  <!-- SCREWDRIVER - Bottom Right -->
-  <g transform="translate(1150, 250) rotate(30)" opacity="0.11" fill="none" stroke="#c9a227" stroke-width="1.5">
-    <rect x="-3" y="-22" width="6" height="28" rx="1.5"/>
-    <path d="M-4,6 L-5,22 L5,22 L4,6 Z"/>
-    <line x1="0" y1="22" x2="0" y2="30" stroke-width="2.5"/>
-  </g>
-
-  <!-- HEX BOLTS scattered -->
-  <g opacity="0.13" fill="none" stroke="#c9a227" stroke-width="1.5">
-    <g transform="translate(300, 265)">
-      <polygon points="0,-10 8.7,-5 8.7,5 0,10 -8.7,5 -8.7,-5"/>
-      <circle r="4"/>
+    <!-- Gear teeth (12 teeth) -->
+    <g stroke-width="1.3">
+      <line x1="0" y1="-58" x2="0" y2="-75"/>
+      <line x1="29" y1="-50" x2="37.5" y2="-65"/>
+      <line x1="50" y1="-29" x2="65" y2="-37.5"/>
+      <line x1="58" y1="0" x2="75" y2="0"/>
+      <line x1="50" y1="29" x2="65" y2="37.5"/>
+      <line x1="29" y1="50" x2="37.5" y2="65"/>
+      <line x1="0" y1="58" x2="0" y2="75"/>
+      <line x1="-29" y1="50" x2="-37.5" y2="65"/>
+      <line x1="-50" y1="29" x2="-65" y2="37.5"/>
+      <line x1="-58" y1="0" x2="-75" y2="0"/>
+      <line x1="-50" y1="-29" x2="-65" y2="-37.5"/>
+      <line x1="-29" y1="-50" x2="-37.5" y2="-65"/>
     </g>
-    <g transform="translate(900, 35)">
-      <polygon points="0,-9 7.8,-4.5 7.8,4.5 0,9 -7.8,4.5 -7.8,-4.5"/>
-      <circle r="3.5"/>
+
+    <!-- Tooth end caps -->
+    <g stroke-width="1">
+      <line x1="-6" y1="-75" x2="6" y2="-75"/>
+      <line x1="33" y1="-68" x2="42" y2="-62"/>
+      <line x1="62" y1="-42" x2="68" y2="-33"/>
+      <line x1="75" y1="-6" x2="75" y2="6"/>
+      <line x1="68" y1="33" x2="62" y2="42"/>
+      <line x1="42" y1="62" x2="33" y2="68"/>
+      <line x1="6" y1="75" x2="-6" y2="75"/>
+      <line x1="-33" y1="68" x2="-42" y2="62"/>
+      <line x1="-62" y1="42" x2="-68" y2="33"/>
+      <line x1="-75" y1="6" x2="-75" y2="-6"/>
+      <line x1="-68" y1="-33" x2="-62" y2="-42"/>
+      <line x1="-42" y1="-62" x2="-33" y2="-68"/>
     </g>
-    <g transform="translate(220, 30)">
-      <polygon points="0,-8 6.9,-4 6.9,4 0,8 -6.9,4 -6.9,-4"/>
-      <circle r="3"/>
+
+    <!-- Spoke details -->
+    <g stroke-width="0.6">
+      <line x1="22" y1="0" x2="55" y2="0"/>
+      <line x1="-22" y1="0" x2="-55" y2="0"/>
+      <line x1="0" y1="22" x2="0" y2="55"/>
+      <line x1="0" y1="-22" x2="0" y2="-55"/>
+      <line x1="15.5" y1="15.5" x2="40" y2="40"/>
+      <line x1="-15.5" y1="15.5" x2="-40" y2="40"/>
+      <line x1="15.5" y1="-15.5" x2="40" y2="-40"/>
+      <line x1="-15.5" y1="-15.5" x2="-40" y2="-40"/>
     </g>
-    <g transform="translate(980, 275)">
-      <polygon points="0,-9 7.8,-4.5 7.8,4.5 0,9 -7.8,4.5 -7.8,-4.5"/>
-      <circle r="3.5"/>
-    </g>
+
+    <!-- Hub mounting holes -->
+    <circle cx="0" cy="35" r="4" stroke-width="0.7"/>
+    <circle cx="30" cy="-17.5" r="4" stroke-width="0.7"/>
+    <circle cx="-30" cy="-17.5" r="4" stroke-width="0.7"/>
+
+    <!-- Technical markings -->
+    <path d="M-45,45 A63.6,63.6 0 0,1 45,45" stroke-width="0.4" stroke-dasharray="2,3"/>
   </g>
 
-  <!-- ====== END TOOLS ====== -->
+  <!-- ====== END DETAILED TOOLS ====== -->
 
   <!-- Scanline -->
   <rect width="1200" height="2" fill="rgba(201,162,39,0.05)" class="scanline"/>
