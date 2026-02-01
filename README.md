@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="assets/banner.svg" alt="ProToolz Banner" width="100%">
+  <img src="assets/banner.svg?v=2" alt="ProToolz Banner" width="100%">
 </p>
 
 <p align="center">
-  <a href="#skills"><img src="https://img.shields.io/badge/Skills-11-667eea?style=for-the-badge&logo=sparkles&logoColor=white" alt="Skills"></a>
-  <a href="#agents"><img src="https://img.shields.io/badge/Agents-1-764ba2?style=for-the-badge&logo=robot&logoColor=white" alt="Agents"></a>
-  <a href="#plugins"><img src="https://img.shields.io/badge/Plugins-1-f093fb?style=for-the-badge&logo=puzzle-piece&logoColor=white" alt="Plugins"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License"></a>
+  <a href="#skills"><img src="https://img.shields.io/badge/Skills-11-c9a227?style=for-the-badge&labelColor=0f0f23" alt="Skills"></a>
+  <a href="#agents"><img src="https://img.shields.io/badge/Agents-1-c9a227?style=for-the-badge&labelColor=0f0f23" alt="Agents"></a>
+  <a href="#plugins"><img src="https://img.shields.io/badge/Plugins-1-c9a227?style=for-the-badge&labelColor=0f0f23" alt="Plugins"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-c9a227?style=for-the-badge&labelColor=0f0f23" alt="License"></a>
 </p>
 
 <p align="center">
