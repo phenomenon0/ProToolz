@@ -9,12 +9,16 @@
       50% { stop-color: #1f2937; }
     }
     @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-6px) rotate(1deg); }
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
     }
-    @keyframes floatRight {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-5px) rotate(-1deg); }
+    @keyframes floatAlt {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    @keyframes shimmer {
+      0%, 100% { opacity: 0.15; }
+      50% { opacity: 0.25; }
     }
     @keyframes pulse {
       0%, 100% { opacity: 0.5; }
@@ -42,8 +46,9 @@
     }
     .grad-stop1 { animation: gradientShift 10s ease-in-out infinite; }
     .grad-stop2 { animation: gradientShift2 10s ease-in-out infinite; }
-    .float-left { animation: float 8s ease-in-out infinite; }
-    .float-right { animation: floatRight 9s ease-in-out infinite 0.5s; }
+    .float { animation: float 7s ease-in-out infinite; }
+    .float-alt { animation: floatAlt 8s ease-in-out infinite 1s; }
+    .shimmer { animation: shimmer 4s ease-in-out infinite; }
     .pulse { animation: pulse 4s ease-in-out infinite; }
     .orbit1 { animation: orbit 20s linear infinite; }
     .orbit2 { animation: orbit2 16s linear infinite; }
@@ -66,6 +71,25 @@
       <stop offset="50%" style="stop-color:#ffffff"/>
       <stop offset="100%" style="stop-color:#c0c0c0"/>
     </linearGradient>
+    <!-- Shiny metallic gradient for tools -->
+    <linearGradient id="metalGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd700"/>
+      <stop offset="25%" style="stop-color:#c9a227"/>
+      <stop offset="50%" style="stop-color:#ffe066"/>
+      <stop offset="75%" style="stop-color:#b8860b"/>
+      <stop offset="100%" style="stop-color:#8b6914"/>
+    </linearGradient>
+    <linearGradient id="metalSilver" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8e8e8"/>
+      <stop offset="25%" style="stop-color:#a0a0a0"/>
+      <stop offset="50%" style="stop-color:#ffffff"/>
+      <stop offset="75%" style="stop-color:#909090"/>
+      <stop offset="100%" style="stop-color:#606060"/>
+    </linearGradient>
+    <filter id="toolGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
     <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
       <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(201,162,39,0.03)" stroke-width="1"/>
     </pattern>
@@ -75,117 +99,18 @@
   <rect width="1200" height="300" fill="url(#bgGradient)"/>
   <rect width="1200" height="300" fill="url(#grid)"/>
 
-  <!-- ====== DETAILED WRENCH - LEFT SIDE ====== -->
-  <g transform="translate(140, 150) rotate(-20)" class="float-left" opacity="0.22" fill="none" stroke="#c9a227">
-    <!-- Main wrench body -->
-    <path d="M-70,0 L-45,0 L-42,-6 L42,-6 L45,0 L70,0 L70,10 L45,10 L42,16 L-42,16 L-45,10 L-70,10 Z"
-          stroke-width="1.5" stroke-linejoin="round"/>
-
-    <!-- Left jaw opening -->
-    <circle cx="-55" cy="5" r="12" stroke-width="1.2"/>
-    <circle cx="-55" cy="5" r="6" stroke-width="0.8"/>
-    <!-- Left jaw detail lines -->
-    <line x1="-67" y1="5" x2="-62" y2="5" stroke-width="0.6"/>
-    <line x1="-48" y1="5" x2="-43" y2="5" stroke-width="0.6"/>
-    <line x1="-55" y1="-7" x2="-55" y2="-2" stroke-width="0.6"/>
-    <line x1="-55" y1="12" x2="-55" y2="17" stroke-width="0.6"/>
-
-    <!-- Right jaw opening -->
-    <circle cx="55" cy="5" r="12" stroke-width="1.2"/>
-    <circle cx="55" cy="5" r="6" stroke-width="0.8"/>
-    <!-- Right jaw detail lines -->
-    <line x1="43" y1="5" x2="48" y2="5" stroke-width="0.6"/>
-    <line x1="62" y1="5" x2="67" y2="5" stroke-width="0.6"/>
-    <line x1="55" y1="-7" x2="55" y2="-2" stroke-width="0.6"/>
-    <line x1="55" y1="12" x2="55" y2="17" stroke-width="0.6"/>
-
-    <!-- Handle grip lines -->
-    <line x1="-30" y1="-4" x2="-30" y2="14" stroke-width="0.5"/>
-    <line x1="-20" y1="-5" x2="-20" y2="15" stroke-width="0.5"/>
-    <line x1="-10" y1="-5" x2="-10" y2="15" stroke-width="0.5"/>
-    <line x1="0" y1="-5" x2="0" y2="15" stroke-width="0.5"/>
-    <line x1="10" y1="-5" x2="10" y2="15" stroke-width="0.5"/>
-    <line x1="20" y1="-5" x2="20" y2="15" stroke-width="0.5"/>
-    <line x1="30" y1="-4" x2="30" y2="14" stroke-width="0.5"/>
-
-    <!-- Center marking -->
-    <rect x="-8" y="0" width="16" height="10" rx="1" stroke-width="0.6"/>
-    <text x="0" y="7" font-family="monospace" font-size="6" fill="#c9a227" text-anchor="middle" opacity="0.7">12</text>
-
-    <!-- Edge bevels -->
-    <path d="M-70,-2 L-70,12" stroke-width="0.4"/>
-    <path d="M70,-2 L70,12" stroke-width="0.4"/>
+  <!-- ====== WRENCH ICON - LEFT ====== -->
+  <g transform="translate(110, 150) scale(2.8) rotate(-30)" class="float shimmer" filter="url(#toolGlow)">
+    <!-- Heroicons wrench-screwdriver style -->
+    <path fill="url(#metalGold)" d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"/>
+    <path fill="url(#metalSilver)" d="M4.867 19.125h.008v.008h-.008v-.008Z"/>
   </g>
 
-  <!-- ====== DETAILED GEAR/COG - RIGHT SIDE ====== -->
-  <g transform="translate(1060, 150)" class="float-right" opacity="0.22" fill="none" stroke="#c9a227">
-    <!-- Outer gear ring -->
-    <circle r="65" stroke-width="1.5"/>
-    <circle r="58" stroke-width="0.8"/>
-
-    <!-- Inner hub -->
-    <circle r="22" stroke-width="1.2"/>
-    <circle r="15" stroke-width="0.8"/>
-    <circle r="8" stroke-width="1"/>
-
-    <!-- Center cross -->
-    <line x1="-5" y1="0" x2="5" y2="0" stroke-width="1"/>
-    <line x1="0" y1="-5" x2="0" y2="5" stroke-width="1"/>
-
-    <!-- Gear teeth (12 teeth) -->
-    <g stroke-width="1.3">
-      <line x1="0" y1="-58" x2="0" y2="-75"/>
-      <line x1="29" y1="-50" x2="37.5" y2="-65"/>
-      <line x1="50" y1="-29" x2="65" y2="-37.5"/>
-      <line x1="58" y1="0" x2="75" y2="0"/>
-      <line x1="50" y1="29" x2="65" y2="37.5"/>
-      <line x1="29" y1="50" x2="37.5" y2="65"/>
-      <line x1="0" y1="58" x2="0" y2="75"/>
-      <line x1="-29" y1="50" x2="-37.5" y2="65"/>
-      <line x1="-50" y1="29" x2="-65" y2="37.5"/>
-      <line x1="-58" y1="0" x2="-75" y2="0"/>
-      <line x1="-50" y1="-29" x2="-65" y2="-37.5"/>
-      <line x1="-29" y1="-50" x2="-37.5" y2="-65"/>
-    </g>
-
-    <!-- Tooth end caps -->
-    <g stroke-width="1">
-      <line x1="-6" y1="-75" x2="6" y2="-75"/>
-      <line x1="33" y1="-68" x2="42" y2="-62"/>
-      <line x1="62" y1="-42" x2="68" y2="-33"/>
-      <line x1="75" y1="-6" x2="75" y2="6"/>
-      <line x1="68" y1="33" x2="62" y2="42"/>
-      <line x1="42" y1="62" x2="33" y2="68"/>
-      <line x1="6" y1="75" x2="-6" y2="75"/>
-      <line x1="-33" y1="68" x2="-42" y2="62"/>
-      <line x1="-62" y1="42" x2="-68" y2="33"/>
-      <line x1="-75" y1="6" x2="-75" y2="-6"/>
-      <line x1="-68" y1="-33" x2="-62" y2="-42"/>
-      <line x1="-42" y1="-62" x2="-33" y2="-68"/>
-    </g>
-
-    <!-- Spoke details -->
-    <g stroke-width="0.6">
-      <line x1="22" y1="0" x2="55" y2="0"/>
-      <line x1="-22" y1="0" x2="-55" y2="0"/>
-      <line x1="0" y1="22" x2="0" y2="55"/>
-      <line x1="0" y1="-22" x2="0" y2="-55"/>
-      <line x1="15.5" y1="15.5" x2="40" y2="40"/>
-      <line x1="-15.5" y1="15.5" x2="-40" y2="40"/>
-      <line x1="15.5" y1="-15.5" x2="40" y2="-40"/>
-      <line x1="-15.5" y1="-15.5" x2="-40" y2="-40"/>
-    </g>
-
-    <!-- Hub mounting holes -->
-    <circle cx="0" cy="35" r="4" stroke-width="0.7"/>
-    <circle cx="30" cy="-17.5" r="4" stroke-width="0.7"/>
-    <circle cx="-30" cy="-17.5" r="4" stroke-width="0.7"/>
-
-    <!-- Technical markings -->
-    <path d="M-45,45 A63.6,63.6 0 0,1 45,45" stroke-width="0.4" stroke-dasharray="2,3"/>
+  <!-- ====== COG/GEAR ICON - RIGHT ====== -->
+  <g transform="translate(1090, 150) scale(3.2)" class="float-alt shimmer" filter="url(#toolGlow)">
+    <!-- Heroicons cog-6-tooth style -->
+    <path fill="url(#metalGold)" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 0 0-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 0 0-2.282.819l-.922 1.597a1.875 1.875 0 0 0 .432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 0 0 0 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 0 0-.432 2.385l.922 1.597a1.875 1.875 0 0 0 2.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 0 0 2.28-.819l.923-1.597a1.875 1.875 0 0 0-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 0 0 0-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 0 0-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 0 0-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 0 0-1.85-1.567h-1.843ZM12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z"/>
   </g>
-
-  <!-- ====== END DETAILED TOOLS ====== -->
 
   <!-- Scanline -->
   <rect width="1200" height="2" fill="rgba(201,162,39,0.05)" class="scanline"/>
