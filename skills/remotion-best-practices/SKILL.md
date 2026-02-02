@@ -45,3 +45,27 @@ Read individual rule files for detailed explanations and code examples:
 - [rules/videos.md](rules/videos.md) - Embedding videos in Remotion - trimming, volume, speed, looping, pitch
 - [rules/parameters.md](rules/parameters.md) - Make a video parametrizable by adding a Zod schema
 - [rules/maps.md](rules/maps.md) - Add a map using Mapbox and animate it
+
+## Creative Pipeline
+
+For production-scale video creation with consistent style and batch rendering:
+
+- [references/mediapack1-pipeline.yaml](references/mediapack1-pipeline.yaml) - Creative leverage pipeline manifest
+
+### Pipeline Modules
+
+| Module | Purpose |
+|--------|---------|
+| **Asset Ledger** | Every asset becomes reusable capital with hashing, tagging, and license tracking |
+| **Style DNA Pack** | Deterministic visual/motion/audio identity tokens - stop designing from scratch |
+| **Template Forge** | Blueprint → Project → Variants - mint videos like software builds |
+
+### Key Concepts
+
+**Style DNA** - Compact token system for fonts, colors, layout, motion, audio, and captions. Your agent generates cohesive visuals without debating fonts/colors every time.
+
+**Template Forge** - A video blueprint compiles into a project scaffold, then produces platform variants (9:16 / 1:1 / 16:9, captions-on/off, CTA swaps).
+
+**Design Principles:**
+- Style DNA should be small enough to memorize and strict enough to enforce
+- Template Forge should be boringly deterministic - batch-generate without babysitting
