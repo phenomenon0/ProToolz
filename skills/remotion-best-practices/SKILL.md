@@ -46,3 +46,4 @@ Read individual rule files for detailed explanations and code examples:
 - [rules/parameters.md](rules/parameters.md) - Make a video parametrizable by adding a Zod schema
 - [rules/maps.md](rules/maps.md) - Add a map using Mapbox and animate it
 - [rules/mediapack1-pipeline.md](rules/mediapack1-pipeline.md) - Creative leverage pipeline (Asset Ledger + Style DNA + Template Forge)
+- [rules/creative-palette.md](rules/creative-palette.md) - Elite font combos + 40-color system with rule-based variation
