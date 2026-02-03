@@ -1,0 +1,147 @@
+{
+  "version": "1.0.0",
+  "catalogs": [
+    "../assets/catalogs/core.catalog.json",
+    "../assets/catalogs/renaissance.catalog.json"
+  ],
+  "sections": [
+    {
+      "id": "hero",
+      "block": "HeroPaintingBlock",
+      "assets": {
+        "portrait": "img/hero-portrait",
+        "portraitDepth": "img/hero-portrait-depth",
+        "cloudAlpha": "img/clouds-wispy",
+        "frame": "model/ornate-frame-a"
+      },
+      "params": {},
+      "timeline": [
+        {
+          "t": 0.0,
+          "cameraZ": 8.0,
+          "halo": 0.0,
+          "frameScale": 0.0,
+          "frameRotation": 1.57,
+          "easing": "easeOutCubic"
+        },
+        {
+          "t": 0.4,
+          "cameraZ": 5.0,
+          "halo": 0.6,
+          "frameScale": 0.7,
+          "frameRotation": 0.785,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "t": 0.7,
+          "cameraZ": 3.5,
+          "halo": 1.0,
+          "frameScale": 0.95,
+          "frameRotation": 0.2,
+          "easing": "easeOutQuad"
+        },
+        {
+          "t": 1.0,
+          "cameraZ": 3.0,
+          "halo": 1.0,
+          "frameScale": 1.0,
+          "frameRotation": 0.0,
+          "easing": "linear"
+        }
+      ]
+    },
+    {
+      "id": "clouds",
+      "block": "CloudLayerBlock",
+      "assets": {
+        "cloudTexture": "img/clouds-dense"
+      },
+      "params": {
+        "layerCount": 4,
+        "baseOpacity": 0.5,
+        "baseSpeed": 0.03,
+        "baseZ": -3,
+        "layerSpacing": 0.4
+      },
+      "timeline": [
+        {
+          "t": 0.0,
+          "cloudOpacity": 0.0,
+          "easing": "easeInQuad"
+        },
+        {
+          "t": 0.3,
+          "cloudOpacity": 0.8,
+          "easing": "easeOutQuad"
+        },
+        {
+          "t": 1.0,
+          "cloudOpacity": 1.0,
+          "easing": "linear"
+        }
+      ]
+    },
+    {
+      "id": "feature-rail",
+      "block": "FeatureRailBlock",
+      "assets": {
+        "card1": "img/feature-card-1",
+        "card2": "img/feature-card-2",
+        "card3": "img/feature-card-3"
+      },
+      "params": {
+        "cards": [
+          {
+            "image": "card1",
+            "parallaxStrength": 0.3,
+            "showFrame": true
+          },
+          {
+            "image": "card2",
+            "parallaxStrength": 0.5,
+            "showFrame": true
+          },
+          {
+            "image": "card3",
+            "parallaxStrength": 0.4,
+            "showFrame": true
+          }
+        ],
+        "spacing": 4.5,
+        "cardWidth": 2.5,
+        "cardHeight": 3.5
+      },
+      "timeline": [
+        {
+          "t": 0.0,
+          "railOpacity": 0.0,
+          "railScale": 0.8,
+          "easing": "easeOutBack"
+        },
+        {
+          "t": 0.5,
+          "railOpacity": 1.0,
+          "railScale": 1.0,
+          "easing": "easeInOutQuad"
+        },
+        {
+          "t": 1.0,
+          "railOpacity": 1.0,
+          "railScale": 1.0,
+          "easing": "linear"
+        }
+      ]
+    }
+  ],
+  "performance": {
+    "prefetchThreshold": 0.6,
+    "disposeDistance": 2,
+    "maxConcurrentLoads": 3,
+    "budgetMB": 512
+  },
+  "renderer": {
+    "antialias": true,
+    "alpha": true,
+    "powerPreference": "high-performance"
+  }
+}

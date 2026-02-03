@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Test - Story System</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; color: #fff; font-family: sans-serif; }
+    #story-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: 1;
+    }
+    .story-container {
+      position: relative;
+      z-index: 2;
+    }
+    .story-section {
+      min-height: 200vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .content {
+      max-width: 600px;
+      text-align: center;
+      background: rgba(0,0,0,0.7);
+      padding: 2rem;
+      border-radius: 10px;
+    }
+    h1 { color: #ffd700; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <canvas id="story-canvas"></canvas>
+
+  <div class="story-container">
+    <section id="test1" class="story-section" data-section-id="test1">
+      <div class="content">
+        <h1>Section 1</h1>
+        <p>Scroll down to see the rotating cube change color</p>
+      </div>
+    </section>
+
+    <section id="test2" class="story-section" data-section-id="test2">
+      <div class="content">
+        <h1>Section 2</h1>
+        <p>The cube should be rotating and changing scale</p>
+      </div>
+    </section>
+  </div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.171.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { StoryRunner } from '../story/StoryRunner.js';
+    import { BlockRegistry } from '../scene-blocks/BlockRegistry.js';
+    import { BaseBlock } from '../scene-blocks/BaseBlock.js';
+
+    // Simple test block
+    class TestBlock extends BaseBlock {
+      async mount({ scene, camera, renderer, assets, params }) {
+        await super.mount({ scene, camera, renderer, assets, params });
+
+        const geometry = new THREE.BoxGeometry(2, 2, 2);
+        const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+        this.cube = new THREE.Mesh(geometry, material);
+
+        this.addObject(this.cube);
+        this.trackDisposable(geometry);
+        this.trackDisposable(material);
+
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 5, 5);
+        this.addObject(light);
+
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        this.addObject(ambientLight);
+      }
+
+      update({ progress, time, viewport, state }) {
+        if (!this.cube) return;
+
+        this.cube.rotation.y = time;
+        this.cube.rotation.x = time * 0.5;
+
+        if (state.scale !== undefined) {
+          this.cube.scale.setScalar(state.scale);
+        }
+        if (state.color !== undefined) {
+          this.cube.material.color.setHex(state.color);
+        }
+      }
+    }
+
+    BlockRegistry.register('TestBlock', TestBlock);
+
+    const storyConfig = {
+      version: "1.0.0",
+      sections: [
+        {
+          id: "test1",
+          block: "TestBlock",
+          assets: {},
+          params: {},
+          timeline: [
+            { t: 0.0, scale: 0.5, color: 0xff0000 },
+            { t: 1.0, scale: 1.5, color: 0x00ff00 }
+          ]
+        },
+        {
+          id: "test2",
+          block: "TestBlock",
+          assets: {},
+          params: {},
+          timeline: [
+            { t: 0.0, scale: 1.5, color: 0x00ff00 },
+            { t: 1.0, scale: 1.0, color: 0x0000ff }
+          ]
+        }
+      ]
+    };
+
+    async function init() {
+      try {
+        console.log('Initializing test demo...');
+
+        const runner = new StoryRunner(storyConfig, {
+          canvasSelector: '#story-canvas',
+          containerSelector: '.story-container',
+          debugMode: true
+        });
+
+        await runner.init();
+        console.log('✅ Test demo initialized!');
+        console.log('Press D to toggle debug overlay');
+
+      } catch (error) {
+        console.error('❌ Initialization failed:', error);
+        console.error(error.stack);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

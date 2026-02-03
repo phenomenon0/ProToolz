@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Procedural Geometry Gallery - WebGPU/WebGL Three.js</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #000;
+      color: #e0e0e0;
+      overflow: hidden;
+    }
+
+    #container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    #controls {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(15, 15, 15, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 350px;
+      backdrop-filter: blur(10px);
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .renderer-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .renderer-badge.webgpu {
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      color: #00ff88;
+    }
+
+    .renderer-badge.webgl {
+      background: rgba(255, 184, 0, 0.1);
+      border: 1px solid rgba(255, 184, 0, 0.3);
+      color: #ffb800;
+    }
+
+    .control-group {
+      margin-bottom: 20px;
+    }
+
+    .control-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .control-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 10px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #999;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .btn:hover {
+      border-color: #0066ff;
+      color: #0066ff;
+    }
+
+    .btn.active {
+      background: #0066ff;
+      color: #fff;
+      border-color: #0066ff;
+    }
+
+    #stats {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(15, 15, 15, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 15px;
+      backdrop-filter: blur(10px);
+      font-size: 12px;
+      font-family: 'Monaco', monospace;
+    }
+
+    .stat {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 5px;
+    }
+
+    .stat:last-child {
+      margin-bottom: 0;
+    }
+
+    .stat-label {
+      color: #666;
+    }
+
+    .stat-value {
+      color: #0066ff;
+      font-weight: 600;
+    }
+
+    .info {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(15, 15, 15, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 15px;
+      max-width: 250px;
+      font-size: 12px;
+      color: #999;
+      backdrop-filter: blur(10px);
+    }
+
+    .info strong {
+      color: #0066ff;
+    }
+  </style>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js",
+      "three/webgpu": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.webgpu.js",
+      "three/tsl": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.webgpu.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.171.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <canvas id="canvas"></canvas>
+
+    <div id="controls">
+      <h2>Procedural Gallery</h2>
+      <span id="renderer-badge" class="renderer-badge">Initializing...</span>
+
+      <div class="control-group">
+        <label>Geometric Shape</label>
+        <div class="button-grid">
+          <button class="btn active" data-shape="torus-knot">Torus Knot</button>
+          <button class="btn" data-shape="sphere">Sphere</button>
+          <button class="btn" data-shape="cylinder">Cylinder</button>
+          <button class="btn" data-shape="cone">Cone</button>
+          <button class="btn" data-shape="cube">Cube</button>
+          <button class="btn" data-shape="torus">Torus</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>Color Scheme</label>
+        <div class="button-grid">
+          <button class="btn active" data-color="gradient">Gradient</button>
+          <button class="btn" data-color="neon">Neon</button>
+          <button class="btn" data-color="pastel">Pastel</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>Material Type</label>
+        <div class="button-grid">
+          <button class="btn active" data-material="standard">Standard</button>
+          <button class="btn" data-material="metallic">Metallic</button>
+          <button class="btn" data-material="glass">Glass</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="info">
+      <strong>Zero Dependencies:</strong><br>
+      • Procedural geometry (no models)<br>
+      • No external assets<br>
+      • Works offline (file://)<br>
+      • Auto-renderer detection
+    </div>
+
+    <div id="stats">
+      <div class="stat">
+        <span class="stat-label">FPS:</span>
+        <span class="stat-value" id="fps">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Triangles:</span>
+        <span class="stat-value" id="triangles">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Shape:</span>
+        <span class="stat-value" id="current-shape">Torus Knot</span>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // Renderer detector inline (simplified version)
+    async function createRenderer(canvas) {
+      // Try WebGPU
+      if (navigator.gpu) {
+        try {
+          const adapter = await navigator.gpu.requestAdapter();
+          if (adapter) {
+            const { WebGPURenderer, MeshStandardNodeMaterial } = await import('three/webgpu');
+            const TSL = await import('three/tsl');
+
+            const renderer = new WebGPURenderer({ canvas, antialias: true });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            return {
+              renderer,
+              type: 'webgpu',
+              MeshStandardNodeMaterial,
+              TSL
+            };
+          }
+        } catch (e) {
+          console.warn('WebGPU failed, using WebGL:', e);
+        }
+      }
+
+      // Fallback to WebGL
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      return {
+        renderer,
+        type: 'webgl',
+        MeshStandardNodeMaterial: null,
+        TSL: null
+      };
+    }
+
+    // State
+    let scene, camera, rendererInfo, controls;
+    let currentGroup = null;
+    let currentShape = 'torus-knot';
+    let currentColorScheme = 'gradient';
+    let currentMaterialType = 'standard';
+
+    // Stats
+    let frameCount = 0;
+    let lastTime = performance.now();
+
+    // Color schemes
+    const colorSchemes = {
+      gradient: [0xff6b6b, 0x4ecdc4, 0x45b7d1, 0xf7b731, 0x5f27cd],
+      neon: [0xff006e, 0x00f5ff, 0x39ff14, 0xffff00, 0xff00ff],
+      pastel: [0xffd6e8, 0xc4e7ff, 0xd4f1d4, 0xfff4cc, 0xe4ccff]
+    };
+
+    // Material presets
+    const materialPresets = {
+      standard: { metalness: 0.3, roughness: 0.4, transparent: false, opacity: 1 },
+      metallic: { metalness: 0.9, roughness: 0.1, transparent: false, opacity: 1 },
+      glass: { metalness: 0, roughness: 0, transparent: true, opacity: 0.3 }
+    };
+
+    // Geometry factory
+    function createGeometry(shape) {
+      switch (shape) {
+        case 'torus-knot':
+          return new THREE.TorusKnotGeometry(1, 0.3, 128, 16);
+        case 'sphere':
+          return new THREE.SphereGeometry(1.5, 64, 64);
+        case 'cylinder':
+          return new THREE.CylinderGeometry(1, 1, 2, 64);
+        case 'cone':
+          return new THREE.ConeGeometry(1, 2, 64);
+        case 'cube':
+          return new THREE.BoxGeometry(2, 2, 2, 32, 32, 32);
+        case 'torus':
+          return new THREE.TorusGeometry(1.2, 0.4, 32, 64);
+        default:
+          return new THREE.TorusKnotGeometry(1, 0.3, 128, 16);
+      }
+    }
+
+    // Material factory
+    function createMaterial(preset, color) {
+      const config = { ...materialPresets[preset], color };
+
+      if (rendererInfo.type === 'webgpu' && rendererInfo.TSL) {
+        return new rendererInfo.MeshStandardNodeMaterial(config);
+      } else {
+        return new THREE.MeshStandardMaterial(config);
+      }
+    }
+
+    // Initialize
+    async function init() {
+      // Create renderer
+      rendererInfo = await createRenderer(document.getElementById('canvas'));
+
+      // Update badge
+      const badge = document.getElementById('renderer-badge');
+      badge.textContent = rendererInfo.type.toUpperCase();
+      badge.classList.add(rendererInfo.type);
+
+      // Scene
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0a0a0a);
+
+      // Camera
+      camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.z = 5;
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0x404040, 2);
+      scene.add(ambientLight);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
+      directionalLight.position.set(5, 5, 5);
+      scene.add(directionalLight);
+
+      const rimLight = new THREE.DirectionalLight(0x00d4ff, 2);
+      rimLight.position.set(-5, 2, -5);
+      scene.add(rimLight);
+
+      // Controls
+      controls = new OrbitControls(camera, rendererInfo.renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 1.5;
+
+      // Initial shape
+      updateShape(currentShape, currentColorScheme, currentMaterialType);
+
+      // Renderer setup
+      rendererInfo.renderer.setSize(window.innerWidth, window.innerHeight);
+
+      // Event listeners
+      document.querySelectorAll('[data-shape]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('[data-shape]').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          currentShape = e.target.dataset.shape;
+          updateShape(currentShape, currentColorScheme, currentMaterialType);
+        });
+      });
+
+      document.querySelectorAll('[data-color]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('[data-color]').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          currentColorScheme = e.target.dataset.color;
+          updateShape(currentShape, currentColorScheme, currentMaterialType);
+        });
+      });
+
+      document.querySelectorAll('[data-material]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('[data-material]').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          currentMaterialType = e.target.dataset.material;
+          updateShape(currentShape, currentColorScheme, currentMaterialType);
+        });
+      });
+
+      // Handle resize
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        rendererInfo.renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // Start animation
+      animate();
+    }
+
+    // Update shape
+    function updateShape(shape, colorScheme, materialType) {
+      // Remove current
+      if (currentGroup) {
+        scene.remove(currentGroup);
+        currentGroup.traverse(obj => {
+          if (obj.geometry) obj.geometry.dispose();
+          if (obj.material) obj.material.dispose();
+        });
+      }
+
+      // Create new
+      currentGroup = new THREE.Group();
+
+      const geometry = createGeometry(shape);
+      const colors = colorSchemes[colorScheme];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const material = createMaterial(materialType, color);
+
+      const mesh = new THREE.Mesh(geometry, material);
+      currentGroup.add(mesh);
+
+      scene.add(currentGroup);
+
+      // Update stats
+      const triangles = geometry.getAttribute('position').count / 3;
+      document.getElementById('triangles').textContent = triangles.toLocaleString();
+      document.getElementById('current-shape').textContent = shape.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
+
+    // Animation loop
+    function animate() {
+      const now = performance.now();
+      const delta = now - lastTime;
+
+      frameCount++;
+      if (delta >= 1000) {
+        const fps = Math.round((frameCount * 1000) / delta);
+        document.getElementById('fps').textContent = fps;
+        frameCount = 0;
+        lastTime = now;
+      }
+
+      controls.update();
+
+      if (currentGroup) {
+        currentGroup.rotation.x += 0.005;
+        currentGroup.rotation.y += 0.005;
+      }
+
+      rendererInfo.renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+
+    // Start
+    init().catch(console.error);
+  </script>
+</body>
+</html>

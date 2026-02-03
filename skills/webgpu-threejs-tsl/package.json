@@ -1,0 +1,40 @@
+{
+  "name": "webgpu-threejs-tsl-skill",
+  "version": "1.0.0",
+  "description": "WebGPU Three.js TSL Skill - Expert guide for WebGPU rendering with Three.js r171+ and TSL",
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "test:watch": "vitest --watch",
+    "test:run": "vitest run",
+    "test:visual": "playwright test",
+    "test:visual:ui": "playwright test --ui",
+    "test:visual:debug": "playwright test --debug",
+    "test:visual:report": "playwright show-report",
+    "test:visual:update": "playwright test --update-snapshots",
+    "test:all": "npm run test:run && npm run test:visual"
+  },
+  "keywords": [
+    "webgpu",
+    "threejs",
+    "tsl",
+    "3d",
+    "graphics",
+    "rendering",
+    "shaders"
+  ],
+  "author": "Claude Code",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
+    "happy-dom": "^12.10.3",
+    "vitest": "^1.0.0"
+  },
+  "dependencies": {
+    "three": "^0.171.0"
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "version": "1.0.0",
+  "id": "renaissance",
+  "name": "Renaissance Scroll Experience Assets",
+  "description": "Cinematic assets for scroll-driven storytelling experiences inspired by Shopify Winter '26 RenAIssance",
+  "assets": [
+    {
+      "id": "img/hero-portrait",
+      "type": "image",
+      "label": "Hero Portrait",
+      "description": "Main portrait image for hero section",
+      "files": {
+        "main": "../images/hero-portrait.jpg"
+      },
+      "tags": ["portrait", "hero", "visual"],
+      "defaults": {
+        "wrapS": "ClampToEdgeWrapping",
+        "wrapT": "ClampToEdgeWrapping"
+      }
+    },
+    {
+      "id": "img/hero-portrait-depth",
+      "type": "depth-map",
+      "label": "Hero Portrait Depth Map",
+      "description": "Depth map for portrait parallax effect",
+      "files": {
+        "main": "../images/hero-portrait-depth.png"
+      },
+      "tags": ["depth", "parallax", "data"]
+    },
+    {
+      "id": "img/clouds-wispy",
+      "type": "alpha-mask",
+      "label": "Wispy Clouds",
+      "description": "Alpha-masked cloud layer texture",
+      "files": {
+        "main": "../images/clouds-wispy.png"
+      },
+      "tags": ["clouds", "atmosphere", "alpha"],
+      "defaults": {
+        "wrapS": "RepeatWrapping",
+        "wrapT": "RepeatWrapping"
+      }
+    },
+    {
+      "id": "img/clouds-dense",
+      "type": "alpha-mask",
+      "label": "Dense Clouds",
+      "description": "Denser cloud layer for background",
+      "files": {
+        "main": "../images/clouds-dense.png"
+      },
+      "tags": ["clouds", "atmosphere", "alpha"],
+      "defaults": {
+        "wrapS": "RepeatWrapping",
+        "wrapT": "RepeatWrapping"
+      }
+    },
+    {
+      "id": "img/feature-card-1",
+      "type": "image",
+      "label": "Feature Card 1",
+      "description": "First feature card image",
+      "files": {
+        "main": "../images/feature-card-1.jpg"
+      },
+      "tags": ["feature", "card", "visual"]
+    },
+    {
+      "id": "img/feature-card-2",
+      "type": "image",
+      "label": "Feature Card 2",
+      "description": "Second feature card image",
+      "files": {
+        "main": "../images/feature-card-2.jpg"
+      },
+      "tags": ["feature", "card", "visual"]
+    },
+    {
+      "id": "img/feature-card-3",
+      "type": "image",
+      "label": "Feature Card 3",
+      "description": "Third feature card image",
+      "files": {
+        "main": "../images/feature-card-3.jpg"
+      },
+      "tags": ["feature", "card", "visual"]
+    },
+    {
+      "id": "model/ornate-frame-a",
+      "type": "model",
+      "label": "Ornate Frame A",
+      "description": "Baroque-style ornate picture frame",
+      "files": {
+        "glb": "../models/ornate-frame-a.glb"
+      },
+      "tags": ["frame", "ornate", "baroque"],
+      "defaults": {
+        "scale": 1.0
+      }
+    },
+    {
+      "id": "model/ornate-frame-b",
+      "type": "model",
+      "label": "Ornate Frame B",
+      "description": "Rococo-style ornate picture frame",
+      "files": {
+        "glb": "../models/ornate-frame-b.glb"
+      },
+      "tags": ["frame", "ornate", "rococo"],
+      "defaults": {
+        "scale": 1.0
+      }
+    }
+  ],
+  "metadata": {
+    "author": "Claude Code",
+    "license": "CC0-1.0",
+    "created": "2026-01-27T00:00:00Z",
+    "updated": "2026-01-27T00:00:00Z"
+  }
+}

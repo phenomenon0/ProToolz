@@ -1,0 +1,172 @@
+{
+  "version": "1.0.0",
+  "id": "core",
+  "name": "Core Asset Pack",
+  "description": "Essential assets for WebGPU-Three.js-TSL projects including PBR textures, HDR environments, and test models",
+  "assets": [
+    {
+      "id": "pbr/oak-wood",
+      "type": "pbr-texture-set",
+      "label": "Oak Wood",
+      "description": "Natural oak wood with visible grain patterns, suitable for furniture and architectural visualization",
+      "files": {
+        "albedo": "textures/oak_wood/albedo.jpg",
+        "normal": "textures/oak_wood/normal.png",
+        "orm": "textures/oak_wood/orm.png"
+      },
+      "defaults": {
+        "roughness": 0.75,
+        "metalness": 0.0,
+        "uvScale": [2, 2],
+        "colorSpace": {
+          "albedo": "srgb",
+          "normal": "linear",
+          "orm": "linear"
+        }
+      },
+      "tags": ["pbr", "wood", "natural", "organic"],
+      "license": "CC0",
+      "preview": "thumbs/pbr_oak_wood.webp"
+    },
+    {
+      "id": "pbr/brushed-aluminum",
+      "type": "pbr-texture-set",
+      "label": "Brushed Aluminum",
+      "description": "Brushed metal finish with directional grain, perfect for industrial and product visualization",
+      "files": {
+        "albedo": "textures/brushed_aluminum/albedo.jpg",
+        "normal": "textures/brushed_aluminum/normal.png",
+        "orm": "textures/brushed_aluminum/orm.png"
+      },
+      "defaults": {
+        "roughness": 0.2,
+        "metalness": 1.0,
+        "uvScale": [1, 1],
+        "colorSpace": {
+          "albedo": "srgb",
+          "normal": "linear",
+          "orm": "linear"
+        }
+      },
+      "tags": ["pbr", "metal", "aluminum", "industrial"],
+      "license": "CC0",
+      "preview": "thumbs/pbr_brushed_aluminum.webp"
+    },
+    {
+      "id": "pbr/cotton-fabric",
+      "type": "pbr-texture-set",
+      "label": "Cotton Fabric",
+      "description": "Soft cotton weave texture, ideal for clothing, upholstery, and textile visualization",
+      "files": {
+        "albedo": "textures/cotton_fabric/albedo.jpg",
+        "normal": "textures/cotton_fabric/normal.png",
+        "orm": "textures/cotton_fabric/orm.png"
+      },
+      "defaults": {
+        "roughness": 0.9,
+        "metalness": 0.0,
+        "uvScale": [4, 4],
+        "colorSpace": {
+          "albedo": "srgb",
+          "normal": "linear",
+          "orm": "linear"
+        }
+      },
+      "tags": ["pbr", "fabric", "cloth", "soft"],
+      "license": "CC0",
+      "preview": "thumbs/pbr_cotton_fabric.webp"
+    },
+    {
+      "id": "env/studio-neutral",
+      "type": "environment",
+      "label": "Studio Neutral 1K",
+      "description": "Soft, neutral studio lighting at 5500K color temperature, ideal for PBR material testing and product visualization",
+      "files": {
+        "hdr": "../env/studio_neutral_1k.hdr"
+      },
+      "defaults": {
+        "intensity": 1.0,
+        "exposure": 0.0,
+        "pmrem": true,
+        "resolution": "1k",
+        "colorTemp": 5500
+      },
+      "tags": ["env", "studio", "neutral", "indoor", "testing"],
+      "license": "CC0",
+      "preview": "thumbs/env_studio_neutral.webp"
+    },
+    {
+      "id": "env/outdoor-sunset",
+      "type": "environment",
+      "label": "Outdoor Sunset 1K",
+      "description": "Warm sunset lighting with dramatic color gradients and directional sun, perfect for natural outdoor scenes",
+      "files": {
+        "hdr": "../env/outdoor_sunset_1k.hdr"
+      },
+      "defaults": {
+        "intensity": 1.2,
+        "exposure": 0.5,
+        "pmrem": true,
+        "resolution": "1k",
+        "colorTemp": 3200
+      },
+      "tags": ["env", "outdoor", "sunset", "warm", "dramatic"],
+      "license": "CC0",
+      "preview": "thumbs/env_outdoor_sunset.webp"
+    },
+    {
+      "id": "model/suzanne",
+      "type": "model",
+      "label": "Suzanne (Monkey)",
+      "description": "Blender's classic monkey head test model with facial features, useful for testing subsurface scattering and character materials",
+      "files": {
+        "glb": "models/suzanne.glb"
+      },
+      "defaults": {
+        "scale": 1.0,
+        "triangles": 500
+      },
+      "tags": ["model", "test", "character", "blender"],
+      "license": "CC0",
+      "preview": "thumbs/model_suzanne.webp"
+    },
+    {
+      "id": "model/torus-knot",
+      "type": "model",
+      "label": "Torus Knot",
+      "description": "Mathematical torus knot with complex curved surfaces, excellent for testing normal maps and surface shaders",
+      "files": {
+        "glb": "models/torus_knot.glb"
+      },
+      "defaults": {
+        "scale": 1.0,
+        "triangles": 480
+      },
+      "tags": ["model", "test", "complex", "mathematical"],
+      "license": "CC0",
+      "preview": "thumbs/model_torus_knot.webp"
+    },
+    {
+      "id": "model/sphere-lowpoly",
+      "type": "model",
+      "label": "Low-Poly Sphere",
+      "description": "Simple low-poly sphere with even triangle distribution, perfect for basic material testing",
+      "files": {
+        "glb": "models/sphere_lowpoly.glb"
+      },
+      "defaults": {
+        "scale": 1.0,
+        "triangles": 320
+      },
+      "tags": ["model", "test", "simple", "sphere"],
+      "license": "CC0",
+      "preview": "thumbs/model_sphere_lowpoly.webp"
+    }
+  ],
+  "metadata": {
+    "author": "Claude Code Asset Library",
+    "license": "CC0",
+    "created": "2026-01-27T00:00:00Z",
+    "updated": "2026-01-27T00:00:00Z"
+  }
+}

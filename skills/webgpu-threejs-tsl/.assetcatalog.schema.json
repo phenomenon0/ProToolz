@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://claude.ai/schemas/webgpu-threejs-tsl/asset-catalog.json",
+  "title": "WebGPU-Three.js-TSL Asset Catalog Schema",
+  "description": "Schema for asset catalog files used by the WebGPU-Three.js-TSL skill asset library",
+  "type": "object",
+  "required": ["version", "id", "assets"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the catalog format"
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for this catalog/pack"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for the pack"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the pack contents"
+    },
+    "assets": {
+      "type": "array",
+      "description": "Array of asset definitions",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "label", "files"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique asset identifier within the catalog (e.g., 'pbr/oak-wood')"
+          },
+          "type": {
+            "enum": ["pbr-texture-set", "environment", "model", "shader", "image", "depth-map", "alpha-mask"],
+            "description": "Asset type for loader selection"
+          },
+          "label": {
+            "type": "string",
+            "description": "Human-readable display name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional detailed description"
+          },
+          "files": {
+            "type": "object",
+            "description": "Map of file roles to relative paths",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "defaults": {
+            "type": "object",
+            "description": "Default properties and configuration",
+            "additionalProperties": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Searchable tags for asset discovery"
+          },
+          "license": {
+            "type": "string",
+            "description": "Asset license (e.g., 'CC0', 'MIT', 'CC-BY-4.0')"
+          },
+          "preview": {
+            "type": "string",
+            "description": "Relative path to preview thumbnail image"
+          },
+          "author": {
+            "type": "string",
+            "description": "Asset creator/author"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Source or information URL"
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional pack-level metadata",
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,174 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://claude.ai/schemas/webgpu-threejs-tsl/story.schema.json",
+  "title": "Story Schema",
+  "description": "Schema for scroll-driven cinematic story experiences",
+  "type": "object",
+  "required": ["version", "sections"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Story format version",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "default": "1.0.0"
+    },
+    "catalogs": {
+      "type": "array",
+      "description": "Asset catalog URLs to load",
+      "items": {
+        "type": "string",
+        "format": "uri-reference"
+      },
+      "minItems": 1
+    },
+    "sections": {
+      "type": "array",
+      "description": "Story sections in scroll order",
+      "items": {
+        "$ref": "#/definitions/section"
+      },
+      "minItems": 1
+    },
+    "performance": {
+      "type": "object",
+      "description": "Performance tuning parameters",
+      "properties": {
+        "prefetchThreshold": {
+          "type": "number",
+          "description": "Progress threshold (0-1) to start prefetching next section",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.6
+        },
+        "disposeDistance": {
+          "type": "integer",
+          "description": "Number of sections back before disposal",
+          "minimum": 1,
+          "default": 2
+        },
+        "maxConcurrentLoads": {
+          "type": "integer",
+          "description": "Maximum concurrent asset loads",
+          "minimum": 1,
+          "maximum": 10,
+          "default": 3
+        },
+        "budgetMB": {
+          "type": "integer",
+          "description": "GPU memory budget in MB",
+          "minimum": 128,
+          "default": 512
+        }
+      }
+    },
+    "renderer": {
+      "type": "object",
+      "description": "Renderer configuration",
+      "properties": {
+        "antialias": {
+          "type": "boolean",
+          "default": true
+        },
+        "alpha": {
+          "type": "boolean",
+          "default": true
+        },
+        "powerPreference": {
+          "type": "string",
+          "enum": ["default", "high-performance", "low-power"],
+          "default": "default"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "section": {
+      "type": "object",
+      "required": ["id", "block"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique section identifier",
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "block": {
+          "type": "string",
+          "description": "Block type name from BlockRegistry"
+        },
+        "assets": {
+          "type": "object",
+          "description": "Asset mapping (key -> assetId)",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "params": {
+          "type": "object",
+          "description": "Block-specific parameters",
+          "additionalProperties": true
+        },
+        "timeline": {
+          "type": "array",
+          "description": "Animation timeline keyframes",
+          "items": {
+            "$ref": "#/definitions/keyframe"
+          },
+          "minItems": 1
+        },
+        "prefetch": {
+          "type": "object",
+          "description": "Additional prefetch configuration",
+          "properties": {
+            "ids": {
+              "type": "array",
+              "description": "Specific asset IDs to prefetch",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tags": {
+              "type": "array",
+              "description": "Asset tags to prefetch",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "keyframe": {
+      "type": "object",
+      "required": ["t"],
+      "properties": {
+        "t": {
+          "type": "number",
+          "description": "Time position (0-1)",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "easing": {
+          "type": "string",
+          "description": "Easing function name",
+          "enum": [
+            "linear",
+            "easeInQuad", "easeOutQuad", "easeInOutQuad",
+            "easeInCubic", "easeOutCubic", "easeInOutCubic",
+            "easeInQuart", "easeOutQuart", "easeInOutQuart",
+            "easeInQuint", "easeOutQuint", "easeInOutQuint",
+            "easeInSine", "easeOutSine", "easeInOutSine",
+            "easeInExpo", "easeOutExpo", "easeInOutExpo",
+            "easeInCirc", "easeOutCirc", "easeInOutCirc",
+            "easeInBack", "easeOutBack", "easeInOutBack",
+            "easeInElastic", "easeOutElastic", "easeInOutElastic",
+            "easeInBounce", "easeOutBounce", "easeInOutBounce"
+          ],
+          "default": "linear"
+        }
+      },
+      "additionalProperties": {
+        "description": "Animation property values (numbers, arrays, objects)"
+      }
+    }
+  }
+}

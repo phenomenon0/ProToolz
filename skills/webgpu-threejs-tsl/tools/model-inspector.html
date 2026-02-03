@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Model Inspector - Identify & Rename Assets</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    #container {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      height: 100vh;
+    }
+
+    #sidebar {
+      background: #2a2a2a;
+      padding: 20px;
+      overflow-y: auto;
+      border-right: 1px solid #444;
+    }
+
+    #viewer {
+      position: relative;
+      background: #1a1a1a;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    h1 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #00d4ff;
+    }
+
+    .model-card {
+      background: #333;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .model-card:hover {
+      border-color: #00d4ff;
+      transform: translateX(5px);
+    }
+
+    .model-card.active {
+      border-color: #00ff88;
+      background: #2a4a3a;
+    }
+
+    .model-name {
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #00d4ff;
+    }
+
+    .model-size {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .model-id {
+      font-size: 11px;
+      color: #666;
+      font-family: monospace;
+      margin-top: 5px;
+    }
+
+    #info-panel {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      border-radius: 8px;
+      min-width: 300px;
+      backdrop-filter: blur(10px);
+    }
+
+    #info-panel h2 {
+      font-size: 16px;
+      margin-bottom: 15px;
+      color: #00ff88;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #333;
+    }
+
+    .stat-label {
+      color: #999;
+    }
+
+    .stat-value {
+      color: #fff;
+      font-weight: bold;
+    }
+
+    #rename-section {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #444;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      background: #1a1a1a;
+      border: 1px solid #444;
+      color: #fff;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #00d4ff;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      background: #1a1a1a;
+      border: 1px solid #444;
+      color: #fff;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      font-family: monospace;
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #00d4ff;
+      border: none;
+      border-radius: 4px;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: #00ff88;
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    #controls {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 15px;
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+    }
+
+    .control-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .control-row label {
+      font-size: 12px;
+      color: #999;
+      min-width: 80px;
+    }
+
+    .control-row button {
+      width: auto;
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .tag-input {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .tag {
+      background: #444;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .tag-remove {
+      cursor: pointer;
+      color: #ff4444;
+      font-weight: bold;
+    }
+
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-size: 18px;
+      color: #00d4ff;
+    }
+
+    .spinner {
+      border: 3px solid #333;
+      border-top: 3px solid #00d4ff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #progress {
+      margin-top: 10px;
+      padding: 10px;
+      background: #2a4a2a;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #00ff88;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="sidebar">
+      <h1>📦 Model Inspector</h1>
+      <div id="model-list"></div>
+    </div>
+    <div id="viewer">
+      <canvas id="canvas"></canvas>
+      <div id="loading">
+        <div class="spinner"></div>
+        Loading models...
+      </div>
+      <div id="info-panel" style="display: none;">
+        <h2 id="current-model-name">Model Name</h2>
+        <div id="stats"></div>
+        <div id="rename-section">
+          <input type="text" id="new-name" placeholder="Enter new name (kebab-case)">
+          <input type="text" id="new-label" placeholder="Display Label">
+          <textarea id="new-description" placeholder="Description"></textarea>
+          <input type="text" id="tag-input" placeholder="Add tag (press Enter)">
+          <div class="tag-input" id="tags-container"></div>
+          <button onclick="saveRename()">Save Changes</button>
+        </div>
+        <div id="progress" style="display: none;"></div>
+      </div>
+      <div id="controls">
+        <div class="control-row">
+          <label>View:</label>
+          <button onclick="resetCamera()">Reset</button>
+          <button onclick="toggleWireframe()">Wireframe</button>
+          <button onclick="toggleGrid()">Grid</button>
+        </div>
+        <div class="control-row">
+          <label>Export:</label>
+          <button onclick="exportCatalog()">Save Catalog</button>
+          <button onclick="exportReport()">Export Report</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.171.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    const canvas = document.getElementById('canvas');
+    const loadingEl = document.getElementById('loading');
+    const infoPanelEl = document.getElementById('info-panel');
+    const modelListEl = document.getElementById('model-list');
+
+    // Scene setup
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1a1a1a);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(5, 3, 5);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const controls = new OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    directionalLight.position.set(5, 5, 5);
+    scene.add(directionalLight);
+
+    const gridHelper = new THREE.GridHelper(10, 10, 0x444444, 0x222222);
+    scene.add(gridHelper);
+
+    // Global state
+    let models = [];
+    let currentModel = null;
+    let currentObject = null;
+    const loader = new GLTFLoader();
+
+    // Load catalog
+    async function loadCatalog() {
+      try {
+        const response = await fetch('http://localhost:8787/packs/downloads-pack/downloads.catalog.json');
+        const catalog = await response.json();
+
+        models = catalog.assets.filter(asset => asset.type === 'model');
+        displayModelList();
+
+        if (models.length > 0) {
+          loadModel(models[0]);
+        }
+
+        loadingEl.style.display = 'none';
+      } catch (error) {
+        console.error('Failed to load catalog:', error);
+        loadingEl.innerHTML = '<p>Error: Could not load catalog</p><p>Make sure server is running on port 8787</p>';
+      }
+    }
+
+    function displayModelList() {
+      modelListEl.innerHTML = models.map((model, index) => `
+        <div class="model-card" data-index="${index}" onclick="selectModel(${index})">
+          <div class="model-name">${model.label}</div>
+          <div class="model-size">${model.metadata?.fileSize || 'Unknown size'}</div>
+          <div class="model-id">${model.id}</div>
+        </div>
+      `).join('');
+    }
+
+    window.selectModel = function(index) {
+      document.querySelectorAll('.model-card').forEach((card, i) => {
+        card.classList.toggle('active', i === index);
+      });
+      loadModel(models[index]);
+    };
+
+    async function loadModel(model) {
+      currentModel = model;
+
+      // Remove previous model
+      if (currentObject) {
+        scene.remove(currentObject);
+        disposeObject(currentObject);
+      }
+
+      try {
+        const url = `http://localhost:8787/packs/downloads-pack/${model.files.glb || model.files.gltf}`;
+        const gltf = await loader.loadAsync(url);
+
+        currentObject = gltf.scene;
+        scene.add(currentObject);
+
+        // Center and scale model
+        const box = new THREE.Box3().setFromObject(currentObject);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const scale = 3 / maxDim;
+
+        currentObject.position.sub(center);
+        currentObject.scale.multiplyScalar(scale);
+
+        // Update camera
+        camera.position.set(5, 3, 5);
+        camera.lookAt(0, 0, 0);
+        controls.target.set(0, 0, 0);
+
+        // Calculate stats
+        updateStats(currentObject, box);
+        infoPanelEl.style.display = 'block';
+
+        // Update rename fields
+        document.getElementById('new-name').value = model.id.split('/')[1];
+        document.getElementById('new-label').value = model.label;
+        document.getElementById('new-description').value = model.description || '';
+        updateTags(model.tags || []);
+
+      } catch (error) {
+        console.error('Failed to load model:', error);
+        alert('Failed to load model: ' + error.message);
+      }
+    }
+
+    function updateStats(object, box) {
+      const size = box.getSize(new THREE.Vector3());
+      let vertices = 0, triangles = 0;
+
+      object.traverse(child => {
+        if (child.isMesh) {
+          const geometry = child.geometry;
+          if (geometry.attributes.position) {
+            vertices += geometry.attributes.position.count;
+          }
+          if (geometry.index) {
+            triangles += geometry.index.count / 3;
+          }
+        }
+      });
+
+      document.getElementById('current-model-name').textContent = currentModel.label;
+      document.getElementById('stats').innerHTML = `
+        <div class="stat-row">
+          <span class="stat-label">Vertices:</span>
+          <span class="stat-value">${vertices.toLocaleString()}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Triangles:</span>
+          <span class="stat-value">${Math.round(triangles).toLocaleString()}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Dimensions:</span>
+          <span class="stat-value">${size.x.toFixed(2)}×${size.y.toFixed(2)}×${size.z.toFixed(2)}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">File Size:</span>
+          <span class="stat-value">${currentModel.metadata?.fileSize || 'Unknown'}</span>
+        </div>
+      `;
+    }
+
+    let currentTags = [];
+
+    function updateTags(tags) {
+      currentTags = [...tags];
+      const container = document.getElementById('tags-container');
+      container.innerHTML = currentTags.map(tag => `
+        <div class="tag">
+          ${tag}
+          <span class="tag-remove" onclick="removeTag('${tag}')">×</span>
+        </div>
+      `).join('');
+    }
+
+    window.removeTag = function(tag) {
+      currentTags = currentTags.filter(t => t !== tag);
+      updateTags(currentTags);
+    };
+
+    document.getElementById('tag-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && e.target.value.trim()) {
+        const tag = e.target.value.trim().toLowerCase();
+        if (!currentTags.includes(tag)) {
+          currentTags.push(tag);
+          updateTags(currentTags);
+        }
+        e.target.value = '';
+      }
+    });
+
+    window.saveRename = async function() {
+      const newName = document.getElementById('new-name').value.trim();
+      const newLabel = document.getElementById('new-label').value.trim();
+      const newDescription = document.getElementById('new-description').value.trim();
+
+      if (!newName) {
+        alert('Please enter a name');
+        return;
+      }
+
+      // Update model in catalog
+      const index = models.findIndex(m => m.id === currentModel.id);
+      models[index] = {
+        ...models[index],
+        id: `downloads-pack/${newName}`,
+        label: newLabel || newName,
+        description: newDescription,
+        tags: currentTags
+      };
+
+      // Update UI
+      displayModelList();
+      document.querySelector(`.model-card[data-index="${index}"]`).classList.add('active');
+
+      const progress = document.getElementById('progress');
+      progress.style.display = 'block';
+      progress.textContent = '✓ Changes saved! Remember to export catalog when done.';
+      setTimeout(() => {
+        progress.style.display = 'none';
+      }, 3000);
+    };
+
+    window.exportCatalog = function() {
+      const catalog = {
+        version: "1.0.0",
+        pack: {
+          id: "downloads-pack",
+          name: "Downloads Asset Pack",
+          description: "Curated assets from Downloads folder",
+          author: "User Collection",
+          license: "Mixed (check individual assets)"
+        },
+        assets: models
+      };
+
+      const json = JSON.stringify(catalog, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'downloads-updated.catalog.json';
+      a.click();
+      URL.revokeObjectURL(url);
+
+      alert('Catalog exported! Copy it to:\n~/.claude/asset-packs/webgpu-threejs-tsl/packs/downloads-pack/downloads.catalog.json');
+    };
+
+    window.exportReport = function() {
+      const report = models.map(m => {
+        return `## ${m.label}\n` +
+               `**ID:** ${m.id}\n` +
+               `**Tags:** ${m.tags.join(', ')}\n` +
+               `**Description:** ${m.description}\n` +
+               `**Size:** ${m.metadata?.fileSize}\n\n`;
+      }).join('');
+
+      const blob = new Blob([report], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'model-inspection-report.md';
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+
+    window.resetCamera = function() {
+      camera.position.set(5, 3, 5);
+      camera.lookAt(0, 0, 0);
+      controls.target.set(0, 0, 0);
+    };
+
+    let wireframeMode = false;
+    window.toggleWireframe = function() {
+      wireframeMode = !wireframeMode;
+      if (currentObject) {
+        currentObject.traverse(child => {
+          if (child.isMesh) {
+            child.material.wireframe = wireframeMode;
+          }
+        });
+      }
+    };
+
+    window.toggleGrid = function() {
+      gridHelper.visible = !gridHelper.visible;
+    };
+
+    function disposeObject(object) {
+      object.traverse(child => {
+        if (child.isMesh) {
+          child.geometry.dispose();
+          if (Array.isArray(child.material)) {
+            child.material.forEach(mat => mat.dispose());
+          } else {
+            child.material.dispose();
+          }
+        }
+      });
+    }
+
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    // Handle resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Start
+    loadCatalog();
+    animate();
+  </script>
+</body>
+</html>

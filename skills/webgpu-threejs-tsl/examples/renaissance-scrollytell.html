@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Renaissance Scroll Experience | WebGPU-Three.js-TSL</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #000;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* Fixed canvas */
+    #story-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Story container */
+    .story-container {
+      position: relative;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* Story sections */
+    .story-section {
+      min-height: 200vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+    }
+
+    .content {
+      max-width: 600px;
+      text-align: center;
+      opacity: 0.9;
+      pointer-events: auto;
+    }
+
+    .content h2 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .content p {
+      font-size: 1.25rem;
+      line-height: 1.8;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Section-specific styles */
+    #hero .content {
+      align-self: flex-start;
+      padding-top: 10vh;
+    }
+
+    #clouds .content {
+      align-self: center;
+    }
+
+    #feature-rail .content {
+      align-self: flex-end;
+      padding-bottom: 10vh;
+    }
+
+    /* Loading screen */
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease-out;
+    }
+
+    #loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(255, 215, 0, 0.2);
+      border-top-color: #ffd700;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .content h2 {
+        font-size: 2rem;
+      }
+
+      .content p {
+        font-size: 1rem;
+      }
+
+      .story-section {
+        min-height: 150vh;
+        padding: 2rem 1rem;
+      }
+    }
+
+    /* Scroll hint */
+    .scroll-hint {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.5);
+      animation: pulse 2s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; transform: translateX(-50%) translateY(0); }
+      50% { opacity: 1; transform: translateX(-50%) translateY(-5px); }
+    }
+
+    .scroll-hint.hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading screen -->
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading experience...</div>
+  </div>
+
+  <!-- Fixed canvas for 3D rendering -->
+  <canvas id="story-canvas"></canvas>
+
+  <!-- Story container with scroll sections -->
+  <div class="story-container">
+    <section id="hero" class="story-section" data-section-id="hero">
+      <div class="content">
+        <h2>The Portrait</h2>
+        <p>
+          Scroll to unveil the masterpiece. Watch as the ornate frame reveals itself,
+          and the painting comes alive with depth and dimension.
+        </p>
+      </div>
+    </section>
+
+    <section id="clouds" class="story-section" data-section-id="clouds">
+      <div class="content">
+        <h2>Atmosphere</h2>
+        <p>
+          Layers of clouds drift across the scene, each moving at its own pace,
+          creating a sense of depth and ethereal beauty.
+        </p>
+      </div>
+    </section>
+
+    <section id="feature-rail" class="story-section" data-section-id="feature-rail">
+      <div class="content">
+        <h2>Discover</h2>
+        <p>
+          Explore the collection as cards glide through space, each revealing
+          a new story through the parallax effect.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <!-- Scroll hint -->
+  <div class="scroll-hint" id="scroll-hint">
+    ↓ Scroll to explore ↓
+  </div>
+
+  <!-- Import map for Three.js from CDN -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.171.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <!-- Main application script -->
+  <script type="module">
+    import { StoryRunner } from '../story/StoryRunner.js';
+    import { BlockRegistry } from '../scene-blocks/BlockRegistry.js';
+    import { HeroPaintingBlock } from '../scene-blocks/HeroPaintingBlock.js';
+    import { CloudLayerBlock } from '../scene-blocks/CloudLayerBlock.js';
+    import { FeatureRailBlock } from '../scene-blocks/FeatureRailBlock.js';
+
+    // Register all block types
+    BlockRegistry.register('HeroPaintingBlock', HeroPaintingBlock);
+    BlockRegistry.register('CloudLayerBlock', CloudLayerBlock);
+    BlockRegistry.register('FeatureRailBlock', FeatureRailBlock);
+
+    // Initialize story runner
+    async function init() {
+      try {
+        const runner = new StoryRunner('./renaissance.story.json', {
+          canvasSelector: '#story-canvas',
+          containerSelector: '.story-container',
+          debugMode: true // Enable debug overlay (press 'D' to toggle)
+        });
+
+        await runner.init();
+
+        // Hide loading screen
+        const loadingScreen = document.getElementById('loading-screen');
+        loadingScreen.classList.add('hidden');
+
+        // Hide scroll hint after first scroll
+        let scrolled = false;
+        window.addEventListener('scroll', () => {
+          if (!scrolled && window.scrollY > 100) {
+            scrolled = true;
+            document.getElementById('scroll-hint').classList.add('hidden');
+          }
+        }, { passive: true });
+
+        console.log('Renaissance Experience: Ready');
+        console.log('  - Press "D" to toggle debug overlay');
+        console.log('  - Scroll to explore the story');
+
+      } catch (error) {
+        console.error('Failed to initialize story:', error);
+        document.querySelector('.loading-text').textContent = 'Failed to load experience';
+      }
+    }
+
+    // Start when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    // Handle page unload
+    window.addEventListener('beforeunload', () => {
+      if (window.storyRunner) {
+        window.storyRunner.destroy();
+      }
+    });
+  </script>
+</body>
+</html>

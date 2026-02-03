@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asset Browser - WebGPU Three.js TSL</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      overflow: hidden;
+    }
+
+    #container {
+      display: grid;
+      grid-template-columns: 300px 1fr 400px;
+      height: 100vh;
+      gap: 1px;
+      background: #1a1a1a;
+    }
+
+    /* Sidebar */
+    #sidebar {
+      background: #0f0f0f;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    #sidebar h2 {
+      font-size: 16px;
+      margin-bottom: 15px;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .filter-group {
+      margin-bottom: 20px;
+    }
+
+    .filter-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 13px;
+      color: #999;
+    }
+
+    .filter-group input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #e0e0e0;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .filter-group select {
+      width: 100%;
+      padding: 8px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #e0e0e0;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .tag-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 10px;
+    }
+
+    .tag-btn {
+      padding: 4px 10px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #999;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .tag-btn.active {
+      background: #0066ff;
+      color: #fff;
+      border-color: #0066ff;
+    }
+
+    #stats {
+      margin-top: 30px;
+      padding: 10px;
+      background: #1a1a1a;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    /* Asset Grid */
+    #asset-grid {
+      background: #0a0a0a;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    #grid-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    #grid-header h1 {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    #asset-count {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .asset-card {
+      background: #0f0f0f;
+      border: 1px solid #1a1a1a;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .asset-card:hover {
+      border-color: #0066ff;
+      transform: translateY(-2px);
+    }
+
+    .asset-card.selected {
+      border-color: #0066ff;
+      box-shadow: 0 0 0 2px rgba(0, 102, 255, 0.3);
+    }
+
+    .asset-thumbnail {
+      width: 100%;
+      aspect-ratio: 1;
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      color: #333;
+    }
+
+    .asset-info {
+      padding: 12px;
+    }
+
+    .asset-label {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .asset-type {
+      font-size: 11px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .asset-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .asset-tag {
+      padding: 2px 6px;
+      background: #1a1a1a;
+      color: #666;
+      border-radius: 3px;
+      font-size: 10px;
+    }
+
+    /* Preview Panel */
+    #preview {
+      background: #0f0f0f;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    #preview h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #fff;
+    }
+
+    #preview-content {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    #preview-content.empty {
+      color: #666;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .preview-section {
+      margin-bottom: 20px;
+    }
+
+    .preview-section h3 {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .preview-value {
+      color: #e0e0e0;
+      margin-bottom: 10px;
+    }
+
+    .preview-code {
+      background: #0a0a0a;
+      border: 1px solid #1a1a1a;
+      border-radius: 4px;
+      padding: 12px;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 12px;
+      color: #0f0;
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+
+    .copy-btn {
+      padding: 6px 12px;
+      background: #0066ff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: #0052cc;
+    }
+
+    .copy-btn.copied {
+      background: #00aa00;
+    }
+
+    #loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      z-index: 1000;
+    }
+
+    #loading.hidden {
+      display: none;
+    }
+
+    .spinner {
+      border: 3px solid #333;
+      border-top: 3px solid #0066ff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin-right: 15px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div id="loading">
+    <div class="spinner"></div>
+    <span>Loading Asset Library...</span>
+  </div>
+
+  <div id="container">
+    <!-- Sidebar: Filters -->
+    <div id="sidebar">
+      <h2>Filters</h2>
+
+      <div class="filter-group">
+        <label for="search">Search</label>
+        <input type="text" id="search" placeholder="Search assets...">
+      </div>
+
+      <div class="filter-group">
+        <label for="type-filter">Type</label>
+        <select id="type-filter">
+          <option value="">All Types</option>
+          <option value="pbr-texture-set">PBR Textures</option>
+          <option value="environment">Environments</option>
+          <option value="model">Models</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Tags</label>
+        <div class="tag-buttons" id="tag-buttons"></div>
+      </div>
+
+      <div id="stats">
+        <div>Total Assets: <span id="total-assets">0</span></div>
+        <div>Filtered: <span id="filtered-assets">0</span></div>
+      </div>
+    </div>
+
+    <!-- Main: Asset Grid -->
+    <div id="asset-grid">
+      <div id="grid-header">
+        <h1>Asset Browser</h1>
+        <div id="asset-count">0 assets</div>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <!-- Preview Panel -->
+    <div id="preview">
+      <h2>Preview</h2>
+      <div id="preview-content" class="empty">
+        Select an asset to view details
+      </div>
+    </div>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js",
+      "three/tsl": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.webgpu.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.171.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import { AssetLibrary } from '../assets/AssetLibrary.js';
+
+    // Configuration
+    const PACK_BASE = 'http://localhost:8787/webgpu-threejs-tsl/packs/core/';
+    const CATALOG_URL = 'http://localhost:8787/webgpu-threejs-tsl/packs/core/catalogs/core.catalog.json';
+
+    // State
+    let allAssets = [];
+    let filteredAssets = [];
+    let selectedAsset = null;
+    let allTags = new Set();
+
+    // DOM Elements
+    const loading = document.getElementById('loading');
+    const grid = document.getElementById('grid');
+    const searchInput = document.getElementById('search');
+    const typeFilter = document.getElementById('type-filter');
+    const tagButtons = document.getElementById('tag-buttons');
+    const previewContent = document.getElementById('preview-content');
+    const totalAssetsSpan = document.getElementById('total-assets');
+    const filteredAssetsSpan = document.getElementById('filtered-assets');
+    const assetCount = document.getElementById('asset-count');
+
+    // Initialize
+    async function init() {
+      try {
+        // Initialize AssetLibrary
+        const assets = AssetLibrary.getInstance({
+          packs: { core: PACK_BASE },
+          enableCache: true
+        });
+
+        await assets.registerCatalogFromUrl(CATALOG_URL, {
+          packId: 'core',
+          baseUri: PACK_BASE
+        });
+
+        // Load all assets
+        allAssets = assets.query({});
+        filteredAssets = [...allAssets];
+
+        // Extract all tags
+        allAssets.forEach(({ asset }) => {
+          asset.tags?.forEach(tag => allTags.add(tag));
+        });
+
+        // Render UI
+        renderTagButtons();
+        renderGrid();
+        updateStats();
+
+        loading.classList.add('hidden');
+      } catch (error) {
+        console.error('Failed to initialize:', error);
+        loading.innerHTML = `<div style="color: #ff4444;">Error: ${error.message}</div>`;
+      }
+    }
+
+    // Render tag buttons
+    function renderTagButtons() {
+      tagButtons.innerHTML = Array.from(allTags)
+        .sort()
+        .map(tag => `<button class="tag-btn" data-tag="${tag}">${tag}</button>`)
+        .join('');
+
+      tagButtons.addEventListener('click', (e) => {
+        if (e.target.classList.contains('tag-btn')) {
+          e.target.classList.toggle('active');
+          filterAssets();
+        }
+      });
+    }
+
+    // Filter assets
+    function filterAssets() {
+      const searchText = searchInput.value.toLowerCase();
+      const selectedType = typeFilter.value;
+      const selectedTags = Array.from(document.querySelectorAll('.tag-btn.active'))
+        .map(btn => btn.dataset.tag);
+
+      filteredAssets = allAssets.filter(({ asset }) => {
+        // Type filter
+        if (selectedType && asset.type !== selectedType) return false;
+
+        // Tag filter
+        if (selectedTags.length > 0 && !selectedTags.every(tag => asset.tags?.includes(tag))) {
+          return false;
+        }
+
+        // Text search
+        if (searchText) {
+          const searchStr = `${asset.id} ${asset.label} ${asset.tags?.join(' ') || ''}`.toLowerCase();
+          if (!searchStr.includes(searchText)) return false;
+        }
+
+        return true;
+      });
+
+      renderGrid();
+      updateStats();
+    }
+
+    // Render asset grid
+    function renderGrid() {
+      if (filteredAssets.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">No assets found</div>';
+        return;
+      }
+
+      grid.innerHTML = filteredAssets.map(({ id, asset }) => {
+        const icon = getAssetIcon(asset.type);
+        return `
+          <div class="asset-card" data-id="${id}">
+            <div class="asset-thumbnail">${icon}</div>
+            <div class="asset-info">
+              <div class="asset-label">${asset.label}</div>
+              <div class="asset-type">${asset.type.replace('-', ' ')}</div>
+              <div class="asset-tags">
+                ${asset.tags?.slice(0, 3).map(tag => `<span class="asset-tag">${tag}</span>`).join('') || ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Add click handlers
+      grid.querySelectorAll('.asset-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const id = card.dataset.id;
+          selectAsset(id);
+        });
+      });
+    }
+
+    // Get icon for asset type
+    function getAssetIcon(type) {
+      const icons = {
+        'pbr-texture-set': '🎨',
+        'environment': '🌍',
+        'model': '🗿',
+        'shader': '⚡'
+      };
+      return icons[type] || '📦';
+    }
+
+    // Select asset
+    function selectAsset(id) {
+      selectedAsset = allAssets.find(a => a.id === id);
+
+      // Update selected state
+      document.querySelectorAll('.asset-card').forEach(card => {
+        card.classList.toggle('selected', card.dataset.id === id);
+      });
+
+      // Render preview
+      renderPreview();
+    }
+
+    // Render preview
+    function renderPreview() {
+      if (!selectedAsset) {
+        previewContent.className = 'empty';
+        previewContent.innerHTML = 'Select an asset to view details';
+        return;
+      }
+
+      previewContent.className = '';
+
+      const { id, asset, packId } = selectedAsset;
+
+      const codeExample = getCodeExample(asset);
+
+      previewContent.innerHTML = `
+        <div class="preview-section">
+          <h3>Asset ID</h3>
+          <div class="preview-value">${id}</div>
+          <button class="copy-btn" data-copy="${id}">Copy ID</button>
+        </div>
+
+        <div class="preview-section">
+          <h3>Label</h3>
+          <div class="preview-value">${asset.label}</div>
+        </div>
+
+        ${asset.description ? `
+          <div class="preview-section">
+            <h3>Description</h3>
+            <div class="preview-value">${asset.description}</div>
+          </div>
+        ` : ''}
+
+        <div class="preview-section">
+          <h3>Type</h3>
+          <div class="preview-value">${asset.type}</div>
+        </div>
+
+        <div class="preview-section">
+          <h3>Tags</h3>
+          <div class="preview-value">${asset.tags?.join(', ') || 'None'}</div>
+        </div>
+
+        ${asset.license ? `
+          <div class="preview-section">
+            <h3>License</h3>
+            <div class="preview-value">${asset.license}</div>
+          </div>
+        ` : ''}
+
+        <div class="preview-section">
+          <h3>Files</h3>
+          <div class="preview-value">
+            ${Object.entries(asset.files).map(([key, path]) => `<div>${key}: ${path}</div>`).join('')}
+          </div>
+        </div>
+
+        ${asset.defaults ? `
+          <div class="preview-section">
+            <h3>Defaults</h3>
+            <div class="preview-code">${JSON.stringify(asset.defaults, null, 2)}</div>
+          </div>
+        ` : ''}
+
+        <div class="preview-section">
+          <h3>Usage Example</h3>
+          <div class="preview-code">${codeExample}</div>
+          <button class="copy-btn" data-copy="${codeExample}">Copy Code</button>
+        </div>
+      `;
+
+      // Add copy handlers
+      previewContent.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const text = btn.dataset.copy;
+          await navigator.clipboard.writeText(text);
+          btn.textContent = 'Copied!';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = btn.dataset.copy.includes('\n') ? 'Copy Code' : 'Copy ID';
+            btn.classList.remove('copied');
+          }, 2000);
+        });
+      });
+    }
+
+    // Get code example
+    function getCodeExample(asset) {
+      switch (asset.type) {
+        case 'pbr-texture-set':
+          return `// Create PBR material
+const material = await assets.createPBRMaterial('${asset.id}');
+mesh.material = material;`;
+
+        case 'environment':
+          return `// Load HDR environment
+const envMap = await assets.getEnvironment('${asset.id}', { pmrem: true });
+scene.environment = envMap;
+scene.background = envMap;`;
+
+        case 'model':
+          return `// Load 3D model
+const model = await assets.getModel('${asset.id}');
+scene.add(model);`;
+
+        default:
+          return `// Load asset
+const asset = await assets.get('${asset.id}');`;
+      }
+    }
+
+    // Update stats
+    function updateStats() {
+      totalAssetsSpan.textContent = allAssets.length;
+      filteredAssetsSpan.textContent = filteredAssets.length;
+      assetCount.textContent = `${filteredAssets.length} asset${filteredAssets.length !== 1 ? 's' : ''}`;
+    }
+
+    // Event listeners
+    searchInput.addEventListener('input', filterAssets);
+    typeFilter.addEventListener('change', filterAssets);
+
+    // Start
+    init();
+  </script>
+</body>
+</html>

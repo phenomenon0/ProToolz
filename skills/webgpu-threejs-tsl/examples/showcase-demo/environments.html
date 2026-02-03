@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebGPU Asset Library - Environment Showcase</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #000;
+      color: #e0e0e0;
+      overflow: hidden;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 70px;
+    }
+
+    .nav-brand {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-brand span {
+      background: linear-gradient(135deg, #00d4ff 0%, #0066ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #999;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #00d4ff;
+    }
+
+    /* Main Container */
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 100vh;
+      padding-top: 70px;
+    }
+
+    .viewport {
+      position: relative;
+      background: #0a0a0a;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .viewport-label {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .viewport-label.studio {
+      color: #00d4ff;
+    }
+
+    .viewport-label.sunset {
+      color: #ff9500;
+    }
+
+    /* Center Controls */
+    .center-controls {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 100;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .center-controls h1 {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #ffffff 0%, #00d4ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .center-controls p {
+      font-size: 16px;
+      color: #999;
+      margin-bottom: 30px;
+    }
+
+    .env-toggle {
+      display: inline-flex;
+      background: rgba(15, 15, 15, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50px;
+      padding: 8px;
+      gap: 8px;
+      backdrop-filter: blur(10px);
+      pointer-events: auto;
+    }
+
+    .env-btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 50px;
+      background: transparent;
+      color: #999;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .env-btn:hover {
+      color: #fff;
+    }
+
+    .env-btn.active {
+      background: linear-gradient(135deg, #00d4ff 0%, #0066ff 100%);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(0, 102, 255, 0.4);
+    }
+
+    /* Bottom Controls */
+    .bottom-controls {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .control-panel {
+      background: rgba(15, 15, 15, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px 30px;
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .control-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-item label {
+      font-size: 10px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .slider-container input[type="range"] {
+      width: 120px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .slider-container input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      background: #0066ff;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .slider-container input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      background: #0066ff;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+
+    .slider-value {
+      min-width: 40px;
+      text-align: right;
+      font-size: 13px;
+      color: #00d4ff;
+      font-weight: 600;
+      font-family: 'Monaco', monospace;
+    }
+
+    /* Info Panel */
+    .info-panel {
+      position: fixed;
+      top: 100px;
+      right: 30px;
+      background: rgba(15, 15, 15, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 25px;
+      width: 300px;
+      backdrop-filter: blur(10px);
+    }
+
+    .info-panel h3 {
+      font-size: 14px;
+      margin-bottom: 15px;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+
+    .info-item .key {
+      color: #999;
+    }
+
+    .info-item .value {
+      color: #00d4ff;
+      font-weight: 600;
+    }
+
+    /* Features */
+    .features {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .feature-badge {
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 11px;
+      color: #00d4ff;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Loading */
+    #loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    #loading.hidden {
+      display: none;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-top: 4px solid #0066ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: #999;
+      font-size: 14px;
+    }
+
+    /* Divider */
+    .divider {
+      position: absolute;
+      left: 50%;
+      top: 70px;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom,
+        transparent 0%,
+        rgba(0, 212, 255, 0.5) 50%,
+        transparent 100%
+      );
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <span>⚡</span> WebGPU Asset Library
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Materials</a></li>
+        <li><a href="environments.html" class="active">Environments</a></li>
+        <li><a href="../asset-browser.html">Asset Browser</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Loading Screen -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading HDR Environments...</div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Left Viewport -->
+    <div class="viewport">
+      <div class="viewport-label studio">Studio Neutral</div>
+      <canvas id="canvas-studio"></canvas>
+    </div>
+
+    <!-- Right Viewport -->
+    <div class="viewport">
+      <div class="viewport-label sunset">Outdoor Sunset</div>
+      <canvas id="canvas-sunset"></canvas>
+    </div>
+  </div>
+
+  <!-- Divider -->
+  <div class="divider"></div>
+
+  <!-- Center Controls -->
+  <div class="center-controls">
+    <h1>HDR Environments</h1>
+    <p>Compare lighting conditions with PMREM-generated reflections</p>
+    <div class="env-toggle">
+      <button class="env-btn active" data-env="split">Split View</button>
+      <button class="env-btn" data-env="studio">Studio Only</button>
+      <button class="env-btn" data-env="sunset">Sunset Only</button>
+    </div>
+  </div>
+
+  <!-- Bottom Controls -->
+  <div class="bottom-controls">
+    <div class="control-panel">
+      <div class="control-item">
+        <label>Exposure</label>
+        <div class="slider-container">
+          <input type="range" id="exposure" min="0" max="200" value="100">
+          <span class="slider-value" id="exposure-value">1.00</span>
+        </div>
+      </div>
+
+      <div class="control-item">
+        <label>Roughness</label>
+        <div class="slider-container">
+          <input type="range" id="roughness" min="0" max="100" value="20">
+          <span class="slider-value" id="roughness-value">0.20</span>
+        </div>
+      </div>
+
+      <div class="control-item">
+        <label>Metalness</label>
+        <div class="slider-container">
+          <input type="range" id="metalness" min="0" max="100" value="100">
+          <span class="slider-value" id="metalness-value">1.00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Panel -->
+  <div class="info-panel">
+    <h3>Environment Details</h3>
+    <div class="info-item">
+      <span class="key">Resolution:</span>
+      <span class="value">1K (1024×512)</span>
+    </div>
+    <div class="info-item">
+      <span class="key">Format:</span>
+      <span class="value">RGBE HDR</span>
+    </div>
+    <div class="info-item">
+      <span class="key">PMREM:</span>
+      <span class="value">Enabled</span>
+    </div>
+    <div class="info-item">
+      <span class="key">Color Space:</span>
+      <span class="value">Linear</span>
+    </div>
+    <div class="info-item">
+      <span class="key">Tone Mapping:</span>
+      <span class="value">ACES Filmic</span>
+    </div>
+  </div>
+
+  <!-- Feature Badges -->
+  <div class="features">
+    <div class="feature-badge">✨ PMREM</div>
+    <div class="feature-badge">🌍 HDR</div>
+    <div class="feature-badge">⚡ WebGPU</div>
+    <div class="feature-badge">🎨 PBR</div>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js",
+      "three/tsl": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.webgpu.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.171.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import WebGPURenderer from 'three/webgpu';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { AssetLibrary } from '../../assets/AssetLibrary.js';
+
+    // Configuration
+    const PACK_BASE = 'http://localhost:8787/webgpu-threejs-tsl/packs/core/';
+    const CATALOG_URL = 'http://localhost:8787/webgpu-threejs-tsl/packs/core/catalogs/core.catalog.json';
+
+    // State
+    let sceneStudio, sceneSunset, camera;
+    let rendererStudio, rendererSunset;
+    let controlsStudio, controlsSunset;
+    let materialStudio, materialSunset;
+    let viewMode = 'split';
+    let assets = null;
+
+    // Initialize
+    async function init() {
+      const loading = document.getElementById('loading');
+      const canvasStudio = document.getElementById('canvas-studio');
+      const canvasSunset = document.getElementById('canvas-sunset');
+
+      try {
+        // Camera (shared)
+        camera = new THREE.PerspectiveCamera(
+          50,
+          (window.innerWidth / 2) / (window.innerHeight - 70),
+          0.1,
+          1000
+        );
+        camera.position.set(0, 0, 5);
+
+        // Studio Scene
+        sceneStudio = new THREE.Scene();
+        rendererStudio = new WebGPURenderer({ canvas: canvasStudio, antialias: true });
+        rendererStudio.setSize(window.innerWidth / 2, window.innerHeight - 70);
+        rendererStudio.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        rendererStudio.toneMapping = THREE.ACESFilmicToneMapping;
+        rendererStudio.toneMappingExposure = 1.0;
+        await rendererStudio.init();
+
+        controlsStudio = new OrbitControls(camera, canvasStudio);
+        controlsStudio.enableDamping = true;
+        controlsStudio.autoRotate = true;
+        controlsStudio.autoRotateSpeed = 1.5;
+
+        // Sunset Scene
+        sceneSunset = new THREE.Scene();
+        rendererSunset = new WebGPURenderer({ canvas: canvasSunset, antialias: true });
+        rendererSunset.setSize(window.innerWidth / 2, window.innerHeight - 70);
+        rendererSunset.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        rendererSunset.toneMapping = THREE.ACESFilmicToneMapping;
+        rendererSunset.toneMappingExposure = 1.0;
+        await rendererSunset.init();
+
+        controlsSunset = new OrbitControls(camera, canvasSunset);
+        controlsSunset.enableDamping = true;
+        controlsSunset.autoRotate = true;
+        controlsSunset.autoRotateSpeed = 1.5;
+
+        // Sync controls
+        controlsStudio.addEventListener('change', () => {
+          controlsSunset.object.position.copy(controlsStudio.object.position);
+          controlsSunset.target.copy(controlsStudio.target);
+        });
+
+        // Initialize AssetLibrary
+        assets = AssetLibrary.getInstance({
+          packs: { core: PACK_BASE },
+          enableCache: true
+        });
+
+        assets.initialize(rendererStudio);
+
+        await assets.registerCatalogFromUrl(CATALOG_URL, {
+          packId: 'core',
+          baseUri: PACK_BASE
+        });
+
+        // Load environments and materials
+        await loadScene();
+
+        // Setup event listeners
+        setupEventListeners();
+
+        // Start animation
+        animate();
+
+        loading.classList.add('hidden');
+      } catch (error) {
+        console.error('Initialization failed:', error);
+        loading.innerHTML = `
+          <div style="color: #ff4444; text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
+            <div style="font-size: 18px; margin-bottom: 10px;">Error Loading Environments</div>
+            <div style="font-size: 14px; color: #999;">${error.message}</div>
+            <div style="font-size: 12px; color: #666; margin-top: 20px;">
+              Make sure HTTP server is running on port 8787
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Load scene
+    async function loadScene() {
+      // Load environments
+      const [envStudio, envSunset] = await Promise.all([
+        assets.getEnvironment('env/studio-neutral', { pmrem: true }),
+        assets.getEnvironment('env/outdoor-sunset', { pmrem: true })
+      ]);
+
+      sceneStudio.environment = envStudio;
+      sceneStudio.background = envStudio;
+
+      sceneSunset.environment = envSunset;
+      sceneSunset.background = envSunset;
+
+      // Load model
+      const model = await assets.getModel('model/torus-knot');
+
+      // Create materials
+      materialStudio = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.2,
+        metalness: 1.0
+      });
+
+      materialSunset = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.2,
+        metalness: 1.0
+      });
+
+      // Add models
+      const meshStudio = model.clone();
+      meshStudio.traverse(child => {
+        if (child.isMesh) {
+          child.material = materialStudio;
+        }
+      });
+      sceneStudio.add(meshStudio);
+
+      const meshSunset = model.clone();
+      meshSunset.traverse(child => {
+        if (child.isMesh) {
+          child.material = materialSunset;
+        }
+      });
+      sceneSunset.add(meshSunset);
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+      // View mode buttons
+      document.querySelectorAll('.env-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.env-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          setViewMode(btn.dataset.env);
+        });
+      });
+
+      // Sliders
+      document.getElementById('exposure').addEventListener('input', (e) => {
+        const value = parseFloat(e.target.value) / 100;
+        document.getElementById('exposure-value').textContent = value.toFixed(2);
+        rendererStudio.toneMappingExposure = value * 2;
+        rendererSunset.toneMappingExposure = value * 2;
+      });
+
+      document.getElementById('roughness').addEventListener('input', (e) => {
+        const value = parseFloat(e.target.value) / 100;
+        document.getElementById('roughness-value').textContent = value.toFixed(2);
+        if (materialStudio) materialStudio.roughness = value;
+        if (materialSunset) materialSunset.roughness = value;
+      });
+
+      document.getElementById('metalness').addEventListener('input', (e) => {
+        const value = parseFloat(e.target.value) / 100;
+        document.getElementById('metalness-value').textContent = value.toFixed(2);
+        if (materialStudio) materialStudio.metalness = value;
+        if (materialSunset) materialSunset.metalness = value;
+      });
+
+      window.addEventListener('resize', onWindowResize);
+    }
+
+    // Set view mode
+    function setViewMode(mode) {
+      viewMode = mode;
+      const container = document.querySelector('.container');
+
+      switch (mode) {
+        case 'split':
+          container.style.gridTemplateColumns = '1fr 1fr';
+          break;
+        case 'studio':
+          container.style.gridTemplateColumns = '1fr 0fr';
+          break;
+        case 'sunset':
+          container.style.gridTemplateColumns = '0fr 1fr';
+          break;
+      }
+
+      onWindowResize();
+    }
+
+    // Handle window resize
+    function onWindowResize() {
+      const width = window.innerWidth;
+      const height = window.innerHeight - 70;
+
+      if (viewMode === 'split') {
+        camera.aspect = (width / 2) / height;
+        rendererStudio.setSize(width / 2, height);
+        rendererSunset.setSize(width / 2, height);
+      } else {
+        camera.aspect = width / height;
+        rendererStudio.setSize(width, height);
+        rendererSunset.setSize(width, height);
+      }
+
+      camera.updateProjectionMatrix();
+    }
+
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+
+      controlsStudio.update();
+      controlsSunset.update();
+
+      if (viewMode !== 'sunset') {
+        rendererStudio.renderAsync(sceneStudio, camera);
+      }
+
+      if (viewMode !== 'studio') {
+        rendererSunset.renderAsync(sceneSunset, camera);
+      }
+    }
+
+    // Start
+    init();
+  </script>
+</body>
+</html>

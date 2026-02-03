@@ -1,0 +1,28 @@
+{
+  "name": "webgpu-threejs-tsl-tools",
+  "version": "1.0.0",
+  "description": "Development tools for WebGPU Three.js TSL skill",
+  "type": "module",
+  "bin": {
+    "story-wizard": "./story-wizard.js",
+    "story-validate": "./story-validator.js"
+  },
+  "scripts": {
+    "wizard": "node story-wizard.js",
+    "validate": "node story-validator.js"
+  },
+  "keywords": [
+    "webgpu",
+    "threejs",
+    "story",
+    "wizard",
+    "cli"
+  ],
+  "author": "Claude Code",
+  "license": "CC0-1.0",
+  "dependencies": {
+    "inquirer": "^9.2.0",
+    "ajv": "^8.12.0",
+    "chalk": "^5.3.0"
+  }
+}
