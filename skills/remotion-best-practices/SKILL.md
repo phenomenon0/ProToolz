@@ -47,3 +47,4 @@ Read individual rule files for detailed explanations and code examples:
 - [rules/maps.md](rules/maps.md) - Add a map using Mapbox and animate it
 - [rules/mediapack1-pipeline.md](rules/mediapack1-pipeline.md) - Creative leverage pipeline (Asset Ledger + Style DNA + Template Forge)
 - [rules/creative-palette.md](rules/creative-palette.md) - Elite font combos + 40-color system with rule-based variation
+- [rules/quality-fundamentals.md](rules/quality-fundamentals.md) - Typography, pacing, and visual richness fundamentals for high-quality video
